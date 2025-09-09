@@ -1,17 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - Controle Financeiro</title>
-  <link rel="stylesheet" href="login.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
 </head>
 <body>
+  <!-- ◼️ Céu animado por trás de tudo -->
+  <div class="sky-wrapper">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+  </div>
+
+  <!-- ◼️ Container de login em primeiro plano -->
   <div class="login-container">
     <h2>Entrar ou Cadastrar</h2>
-    <input type="email" id="email" placeholder="E-mail">
-    <input type="password" id="senha" placeholder="Senha">
+    <input type="email" id="email" placeholder="E-mail" />
+    <input type="password" id="senha" placeholder="Senha" />
     <div class="button-group">
       <button id="btn-login-email">Entrar</button>
       <button id="btn-criar-conta">Criar Conta</button>
@@ -29,7 +40,7 @@
       signInWithPopup
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-    // 🔧 Configuração correta do Firebase
+    // Inicializa Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBQeYc0Y-eYONv3ZfvZoJEzOjoKR371P-Y",
       authDomain: "controle-financeiro-65744.firebaseapp.com",
@@ -39,44 +50,36 @@
       appId: "1:587527394934:web:c142740ef0139a5cf63157",
       measurementId: "G-RT2T1HNV4G"
     };
-
-    const app = initializeApp(firebaseConfig);
+    const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Login com email/senha
+    // Handlers de autenticação
     document.getElementById('btn-login-email').addEventListener('click', () => {
       const email = document.getElementById('email').value.trim();
       const senha = document.getElementById('senha').value;
-
       if (!email || !senha) {
         alert("Preencha e-mail e senha.");
         return;
       }
-
       signInWithEmailAndPassword(auth, email, senha)
         .then(() => window.location.href = 'index.html')
         .catch(err => alert('Erro ao entrar: ' + err.message));
     });
 
-    // Criar conta
     document.getElementById('btn-criar-conta').addEventListener('click', () => {
       const email = document.getElementById('email').value.trim();
       const senha = document.getElementById('senha').value;
-
       if (!email || !senha) {
         alert("Preencha e-mail e senha.");
         return;
       }
-
       createUserWithEmailAndPassword(auth, email, senha)
         .then(() => window.location.href = 'index.html')
         .catch(err => alert('Erro ao criar conta: ' + err.message));
     });
 
-    // Login com Google
     document.getElementById('btn-login-google').addEventListener('click', () => {
       const provider = new GoogleAuthProvider();
-
       signInWithPopup(auth, provider)
         .then(() => window.location.href = 'index.html')
         .catch(err => alert('Erro ao entrar com Google: ' + err.message));
@@ -84,5 +87,3 @@
   </script>
 </body>
 </html>
-
-

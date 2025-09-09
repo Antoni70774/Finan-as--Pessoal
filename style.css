@@ -236,19 +236,22 @@ body {
   flex: 1;
   padding: 1rem;
   border-radius: 8px;
-  background: #f5f5f5;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background: transparent; /* sem cor de fundo */
+  box-shadow: none;        /* sem sombra */
   font-size: 1.2rem;
   font-weight: bold;
   color: #333;
   text-align: center;
+  border: 1px solid #ccc;  /* opcional: borda leve para separar visualmente */
 }
 
-/* Cores específicas */
-.summary-item.saldo   { background: #dfefff; }
-.summary-item.receita { background: #e0f8e9; color: #2e7d32; }
-.summary-item.despesa { background: #ffe0e0; color: #c62828; }
-
+/* Cores específicas removidas */
+.summary-item.saldo,
+.summary-item.receita,
+.summary-item.despesa {
+  background: transparent;
+  color: inherit;
+}
 
 /* Navegação do Mês */
 .month-nav {

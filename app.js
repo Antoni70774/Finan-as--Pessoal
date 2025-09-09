@@ -101,6 +101,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // garantir que signOut e auth estão importados e disponíveis no app.js
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        try {
+          await signOut(auth);
+          // após signOut, onAuthStateChanged tratará o estado (app.js já tem onAuthStateChanged)
+          window.location.href = 'login.html';
+        } catch (err) {
+          console.error('Erro ao sair:', err);
+          alert('Erro ao sair: ' + (err.message || err));
+        }
+      });
+    }
+
+
     const loginEmailBtn = document.getElementById('btn-login-email');
     const signupEmailBtn = document.getElementById('btn-signup-email');
     const resetBtn = document.getElementById('btn-reset');
@@ -219,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function registerServiceWorker() {
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(console.error);
+            navigator.serviceWorker.register('./sw.js').catch(console.error);
         }
     }
 

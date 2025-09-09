@@ -1,75 +1,77 @@
-/* 1) Fundo e animação do céu */
-.sky-wrapper {
+/* 1) Céu noturno com gradiente + estrelas em movimento */
+.sky-night {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(to bottom, #74abe2, #5563de);
-  background-size: 200% 200%;
-  z-index: -1;
-  animation: skyShift 20s ease infinite;
+  inset: 0; /* top:0; right:0; bottom:0; left:0 */
+  background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #000814 75%);
+  overflow: hidden;
+  z-index: -2;
 }
 
-@keyframes skyShift {
-  0%   { background-position: 0% 0%; }
-  50%  { background-position: 100% 100%; }
-  100% { background-position: 0% 0%; }
-}
-
-/* 2) Nuvens flutuantes */
-.cloud {
+.sky-night::before {
+  content: '';
   position: absolute;
-  background: rgba(255,255,255,0.85);
-  border-radius: 50%;
-  filter: blur(4px);
+  top: 0; left: 0;
+  width: 200%; height: 200%;
+  background: url('stars.png') repeat; /* substitua por sua sprite de estrelas */
+  opacity: 0.7;
+  animation: moveStars 120s linear infinite;
 }
 
-.cloud-1 {
-  width: 220px; height: 60px;
-  top: 15%; left: -30%;
-  animation: moveClouds 60s linear infinite;
-}
-.cloud-2 {
-  width: 180px; height: 50px;
-  top: 45%; left: -40%;
-  animation: moveClouds 80s linear infinite;
-}
-.cloud-3 {
-  width: 260px; height: 70px;
-  top: 75%; left: -20%;
-  animation: moveClouds 100s linear infinite;
+/* move a camada de estrelas diagonalmente */
+@keyframes moveStars {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(-50%, -50%); }
 }
 
-@keyframes moveClouds {
-  from { transform: translateX(0); }
-  to   { transform: translateX(200vw); }
+/* (opcional) pequenos “twinkles” */
+.sky-night::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 25% 35%, rgba(255,255,255,0.05) 0%, transparent 20%),
+              radial-gradient(circle at 75% 65%, rgba(255,255,255,0.04) 0%, transparent 15%);
+  animation: twinkle 3s ease-in-out infinite alternate;
 }
 
-/* 3) Container de login */
+@keyframes twinkle {
+  from { opacity: 0.4; }
+  to   { opacity: 0.7; }
+}
+
+
+/* 2) Centraliza o formulário na tela */
 .login-container {
-  position: relative;
-  z-index: 10;
-  max-width: 360px;
-  margin: 8% auto;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
   padding: 2rem;
-  background: rgba(255,255,255,0.9);
+  background: rgba(20, 24, 42, 0.9);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+  color: #fff;
   font-family: 'Roboto', sans-serif;
+  text-align: center;
 }
 
+/* 3) Inputs e botões no tema noturno */
 .login-container h2 {
-  text-align: center;
-  margin-bottom: 1rem;
-  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
 }
 
 .login-container input {
   width: 100%;
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid #33415c;
   border-radius: 4px;
+  background: #1f2740;
+  color: #e0e6f2;
   font-size: 1rem;
+}
+
+.login-container input::placeholder {
+  color: #abb2bf;
 }
 
 .button-group {
@@ -82,7 +84,7 @@
   padding: 0.75rem;
   border: none;
   border-radius: 4px;
-  background: #5563de;
+  background: #3a507d;
   color: #fff;
   font-size: 1rem;
   cursor: pointer;
@@ -90,5 +92,5 @@
 }
 
 .button-group button:hover {
-  background: #3b49a1;
+  background: #2c3e66;
 }

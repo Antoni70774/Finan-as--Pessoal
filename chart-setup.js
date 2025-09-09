@@ -7,8 +7,7 @@ let lastTransactions = [];
  */
 export function createExpenseChart() {
     const ctx = document.getElementById('main-chart').getContext('2d');
-    const ChartLib = window.Chart || Chart; // garante compatibilidade
-    chartInstance = new ChartLib(ctx, {
+    chartInstance = new window.Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: [],

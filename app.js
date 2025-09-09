@@ -68,6 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const payableForm = document.getElementById('payable-form');
     const payableList = document.getElementById('payable-list');
 
+    // elementos da tela de login
+    const authEmail      = document.getElementById('auth-email');
+    const authPassword   = document.getElementById('auth-password');
+    const loginEmailBtn  = document.getElementById('btn-login-email');
+    const signupEmailBtn = document.getElementById('btn-signup-email');
+    const resetBtn       = document.getElementById('btn-reset');
+    const loginGoogleBtn = document.getElementById('btn-login-google');
+
     const state = {
         transactions: JSON.parse(localStorage.getItem('transactions')) ||
             [],

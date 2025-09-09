@@ -10,18 +10,79 @@
 <body>
   <div class="login-container">
     <h2>Entrar ou Cadastrar</h2>
-    <input type="email" id="auth-email" placeholder="E-mail">
-    <input type="password" id="auth-password" placeholder="Senha">
-
+    <input type="email" id="email" placeholder="E-mail">
+    <input type="password" id="senha" placeholder="Senha">
     <div class="button-group">
       <button id="btn-login-email">Entrar</button>
-      <button id="btn-signup-email">Criar Conta</button>
-      <button id="btn-reset">Esqueci a Senha</button>
+      <button id="btn-criar-conta">Criar Conta</button>
       <button id="btn-login-google">Continuar com Google</button>
     </div>
   </div>
 
-  <!-- Só este script basta -->
-  <script type="module" src="app.js"></script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+    // 🔧 Configuração correta do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQeYc0Y-eYONv3ZfvZoJEzOjoKR371P-Y",
+      authDomain: "controle-financeiro-65744.firebaseapp.com",
+      projectId: "controle-financeiro-65744",
+      storageBucket: "controle-financeiro-65744.appspot.com",
+      messagingSenderId: "587527394934",
+      appId: "1:587527394934:web:c142740ef0139a5cf63157",
+      measurementId: "G-RT2T1HNV4G"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Login com email/senha
+    document.getElementById('btn-login-email').addEventListener('click', () => {
+      const email = document.getElementById('email').value.trim();
+      const senha = document.getElementById('senha').value;
+
+      if (!email || !senha) {
+        alert("Preencha e-mail e senha.");
+        return;
+      }
+
+      signInWithEmailAndPassword(auth, email, senha)
+        .then(() => window.location.href = 'index.html')
+        .catch(err => alert('Erro ao entrar: ' + err.message));
+    });
+
+    // Criar conta
+    document.getElementById('btn-criar-conta').addEventListener('click', () => {
+      const email = document.getElementById('email').value.trim();
+      const senha = document.getElementById('senha').value;
+
+      if (!email || !senha) {
+        alert("Preencha e-mail e senha.");
+        return;
+      }
+
+      createUserWithEmailAndPassword(auth, email, senha)
+        .then(() => window.location.href = 'index.html')
+        .catch(err => alert('Erro ao criar conta: ' + err.message));
+    });
+
+    // Login com Google
+    document.getElementById('btn-login-google').addEventListener('click', () => {
+      const provider = new GoogleAuthProvider();
+
+      signInWithPopup(auth, provider)
+        .then(() => window.location.href = 'index.html')
+        .catch(err => alert('Erro ao entrar com Google: ' + err.message));
+    });
+  </script>
 </body>
 </html>
+
+

@@ -1,5 +1,3 @@
-// chart-setup.js
-
 let chartInstance;
 let lastTransactions = [];
 
@@ -8,54 +6,57 @@ let lastTransactions = [];
  * Deve ser chamado apenas uma vez na inicialização do app.
  */
 export function createExpenseChart() {
-  const canvas = document.getElementById('main-chart');
-  if (!canvas) return;   // sai silenciosamente se não houver <canvas id="main-chart">
-  const ctx = canvas.getContext('2d');
-  chartInstance = new window.Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: [],
-      datasets: [{
-        data: [],
-        backgroundColor: [
-          '#4A90E2', '#2bc47d', '#ff3d3d',
-          '#ffd700', '#ff8a80', '#e6f7ee'
-        ]
-      }]
-    },
-    options: {
-      plugins: { legend: { position: 'bottom' } },
-      onClick: chartClickHandler
-    }
-  });
+    const ctx = document.getElementById('main-chart').getContext('2d');
+    chartInstance = new window.Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: [
+                    '#4A90E2', // Azul
+                    '#2bc47d', // Verde
+                    '#ff3d3d', // Vermelho
+                    '#ffd700', // Amarelo
+                    '#ff8a80', // Rosa
+                    '#e6f7ee'  // Verde claro
+                ]
+            }]
+        },
+        options: {
+            plugins: { legend: { position: 'bottom' } },
+            onClick: chartClickHandler
+        }
+    });
 }
 
 /**
  * Atualiza o gráfico conforme os dados filtrados.
- * @param {Array} transactions
- * @param {Array} categories
+ * Não perde dados já lançados - só atualiza a visualização.
+ * @param {Array} transactions - Array de lançamentos (filtrados por mês ou tipo)
+ * @param {Array} categories - Array de categorias (despesa ou receita)
  */
 export function updateExpenseChart(transactions, categories) {
-  if (!chartInstance) return;
-  lastTransactions = transactions;
-  const data = categories.map(cat =>
-    transactions.filter(t => t.category === cat)
-                .reduce((sum, t) => sum + t.amount, 0)
-  );
-  chartInstance.data.labels = categories;
-  chartInstance.data.datasets[0].data = data;
-  chartInstance.update();
+    if (!chartInstance) return;
+    lastTransactions = transactions;
+    const data = categories.map(cat =>
+        transactions.filter(t => t.category === cat).reduce((sum, t) => sum + t.amount, 0)
+    );
+    chartInstance.data.labels = categories;
+    chartInstance.data.datasets[0].data = data;
+    chartInstance.update();
 }
 
 /**
  * Handler para clique em fatia do gráfico.
+ * Mostra detalhes dos lançamentos da categoria clicada.
  */
 function chartClickHandler(evt, elements) {
-  if (!elements.length || !chartInstance) return;
-  const idx = elements[0].index;
-  const category = chartInstance.data.labels[idx];
-  const filtered = lastTransactions.filter(t => t.category === category);
-  if (typeof window.showChartDetails === 'function') {
-    window.showChartDetails(category, filtered);
-  }
+    if (!elements.length) return;
+    const idx = elements[0].index;
+    const cat = chartInstance.data.labels[idx];
+    const filtered = lastTransactions.filter(t => t.category === cat);
+    if (typeof window.showChartDetails === "function") {
+        window.showChartDetails(cat, filtered);
+    }
 }

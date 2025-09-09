@@ -222,8 +222,10 @@ body {
 .dashboard-summary {
   display: flex;
   flex-direction: column;
+  align-items: center; 
   gap: 1rem;
   margin: 2rem 1rem;
+  max-width: 600px;
 }
 
 .summary-row {

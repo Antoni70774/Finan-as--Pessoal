@@ -4,6 +4,7 @@ let lastTransactions = [];
 /**
  * Cria o gráfico de despesas/receitas por categoria.
  * Deve ser chamado apenas uma vez na inicialização do app.
+ */
 export function createExpenseChart() {
     const canvas = document.getElementById('main-chart');
     if (!canvas) {
@@ -24,12 +25,6 @@ export function createExpenseChart() {
                 ]
             }]
         },
-        options: {
-            plugins: { legend: { position: 'bottom' } },
-            onClick: chartClickHandler
-        }
-    });
-},
         options: {
             plugins: { legend: { position: 'bottom' } },
             onClick: chartClickHandler

@@ -135,6 +135,22 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    if (loginGoogleBtn) {
+    loginGoogleBtn.addEventListener('click', async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+            console.log('Login com Google bem-sucedido:', user);
+            // Redirecionar ou atualizar interface
+            window.location.href = 'index.html';
+        } catch (err) {
+            console.error('Erro ao entrar com Google:', err);
+            alert('Erro ao entrar com Google: ' + (err.message || err));
+        }
+    });
+}
+
+
     if (signupEmailBtn) {
         signupEmailBtn.onclick = async () => {
             try {

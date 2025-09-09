@@ -220,38 +220,25 @@ body {
 
 /* Resumo do Dashboard */
 .dashboard-summary {
-  display: flex;
-  flex-direction: column;
-  align-items: center; 
-  gap: 1rem;
-  margin: 2rem 1rem;
-  max-width: 600px;
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    gap: 15px;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+    background: none;
 }
 
-.summary-row {
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
+.dashboard-summary .summary-item {
+    flex: 1;
+    padding: 20px;
 }
 
-.summary-item {
-  flex: 1;
-  padding: 1rem;
-  border-radius: 8px;
-  background: transparent; /* sem cor de fundo */
-  box-shadow: none;        /* sem sombra */
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #ffffff;
-  text-align: center;
-}
-
-/* Cores específicas removidas */
-.summary-item.saldo,
-.summary-item.receita,
-.summary-item.despesa {
-  background: transparent;
-  color: inherit;
+.summary-item h4 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-top: 5px;
 }
 
 /* Navegação do Mês */

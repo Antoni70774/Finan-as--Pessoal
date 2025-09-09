@@ -102,19 +102,24 @@
           <button id="next-month" class="btn-secondary">&gt;</button>
         </div>
         <div class="dashboard-summary" id="dashboard-summary">
-          <div class="summary-item">
+        <!-- Saldo acima -->
+        <div class="summary-item saldo">
+          <span>Saldo</span>
+          <h4 id="month-balance">R$ 0,00</h4>
+        </div>
+      
+        <!-- Receita e Despesa lado a lado -->
+        <div class="summary-row">
+          <div class="summary-item receita">
             <span>Receita</span>
             <h4 id="month-income">R$ 0,00</h4>
           </div>
-          <div class="summary-item">
+          <div class="summary-item despesa">
             <span>Despesa</span>
             <h4 id="month-expense">R$ 0,00</h4>
           </div>
-          <div class="summary-item">
-            <span>Saldo</span>
-            <h4 id="month-balance">R$ 0,00</h4>
-          </div>
         </div>
+      </div>
         <div class="chart-selector">
           <button class="chart-btn active" data-type="all">Geral</button>
           <button class="chart-btn" data-type="expense">Despesas</button>

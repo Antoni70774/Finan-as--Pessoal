@@ -235,14 +235,13 @@ body {
 .summary-item {
   flex: 1;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 8px
   background: transparent; /* sem cor de fundo */
-  box-shadow: none;        /* sem sombra */
   font-size: 1.2rem;
   font-weight: bold;
   color: #333;
   text-align: center;
-  border: 1px solid #ccc;  /* opcional: borda leve para separar visualmente */
+  border: none;
 }
 
 /* Cores específicas removidas */

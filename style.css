@@ -245,7 +245,7 @@ body {
 }
 
 /* Cores específicas */
-.summary-item.saldo   { background: #dfefff; color: #1a3d7c; }
+.summary-item.saldo   { background: #dfefff; }
 .summary-item.receita { background: #e0f8e9; color: #2e7d32; }
 .summary-item.despesa { background: #ffe0e0; color: #c62828; }
 

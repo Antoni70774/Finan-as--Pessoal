@@ -371,6 +371,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let annualChart = null;
 
+    function inicializarGraficos() {
+    const canvas = document.getElementById('main-chart');
+    if (canvas) {
+        createExpenseChart();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // ... outros inits ...
+    inicializarGraficos();
+});
+
     function atualizarGraficoAnual() {
         const canvas = document.getElementById('annual-chart');
         if (!canvas) return;

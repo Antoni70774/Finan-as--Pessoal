@@ -8,14 +8,8 @@ let lastTransactions = [];
  * Deve ser chamado apenas uma vez na inicialização do app.
  */
 export function createExpenseChart() {
-  // 1) Verifica se o <canvas id="main-chart"> está no DOM
   const canvas = document.getElementById('main-chart');
-  if (!canvas) {
-    console.warn('Elemento #main-chart não encontrado. Gráfico não será renderizado.');
-    return;
-  }
-
-  // 2) Pega o contexto 2D e instancia o Chart.js
+  if (!canvas) return;   // sai silenciosamente se não houver <canvas id="main-chart">
   const ctx = canvas.getContext('2d');
   chartInstance = new window.Chart(ctx, {
     type: 'doughnut',
@@ -30,55 +24,37 @@ export function createExpenseChart() {
       }]
     },
     options: {
-      plugins: {
-        legend: { position: 'bottom' }
-      },
+      plugins: { legend: { position: 'bottom' } },
       onClick: chartClickHandler
     }
   });
 }
 
-
 /**
  * Atualiza o gráfico conforme os dados filtrados.
- * Não perde dados já lançados – só atualiza a visualização.
- *
- * @param {Array} transactions  Array de lançamentos (filtrados por mês ou tipo)
- * @param {Array} categories    Array de categorias (despesa ou receita)
+ * @param {Array} transactions
+ * @param {Array} categories
  */
 export function updateExpenseChart(transactions, categories) {
-  if (!chartInstance) {
-    console.warn('Chart de despesas ainda não foi criado.');
-    return;
-  }
-
+  if (!chartInstance) return;
   lastTransactions = transactions;
-
-  // Calcula total por categoria
   const data = categories.map(cat =>
-    transactions
-      .filter(t => t.category === cat)
-      .reduce((sum, t) => sum + t.amount, 0)
+    transactions.filter(t => t.category === cat)
+                .reduce((sum, t) => sum + t.amount, 0)
   );
-
   chartInstance.data.labels = categories;
   chartInstance.data.datasets[0].data = data;
   chartInstance.update();
 }
 
-
 /**
  * Handler para clique em fatia do gráfico.
- * Recebe os lançamentos da categoria clicada e
- * dispara window.showChartDetails(cat, filtered).
  */
 function chartClickHandler(evt, elements) {
   if (!elements.length || !chartInstance) return;
-
   const idx = elements[0].index;
   const category = chartInstance.data.labels[idx];
   const filtered = lastTransactions.filter(t => t.category === category);
-
   if (typeof window.showChartDetails === 'function') {
     window.showChartDetails(category, filtered);
   }

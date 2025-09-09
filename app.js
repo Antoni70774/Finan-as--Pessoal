@@ -1051,4 +1051,4 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Erro ao fazer logout.');
         }
     });
-});
+

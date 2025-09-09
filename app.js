@@ -178,17 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    if (loginGoogleBtn) {
-        loginGoogleBtn.onclick = async () => {
-            try {
-                await signInWithPopup(auth, googleProvider);
-            } catch (err) {
-                console.error('Erro login Google:', err);
-                alert(err.message || 'Falha no login com Google.');
-            }
-        };
-    }
-
     async function firstCloudSync() {
         if (!currentUid) return;
         const pull = async (name) => {

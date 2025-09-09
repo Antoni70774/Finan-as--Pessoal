@@ -4,9 +4,14 @@ let lastTransactions = [];
 /**
  * Cria o gráfico de despesas/receitas por categoria.
  * Deve ser chamado apenas uma vez na inicialização do app.
- */
 export function createExpenseChart() {
-    const ctx = document.getElementById('main-chart').getContext('2d');
+    const canvas = document.getElementById('main-chart');
+    if (!canvas) {
+        console.warn('Elemento #main-chart não encontrado. Gráfico não será renderizado.');
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
     chartInstance = new window.Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -14,15 +19,17 @@ export function createExpenseChart() {
             datasets: [{
                 data: [],
                 backgroundColor: [
-                    '#4A90E2', // Azul
-                    '#2bc47d', // Verde
-                    '#ff3d3d', // Vermelho
-                    '#ffd700', // Amarelo
-                    '#ff8a80', // Rosa
-                    '#e6f7ee'  // Verde claro
+                    '#4A90E2', '#2bc47d', '#ff3d3d',
+                    '#ffd700', '#ff8a80', '#e6f7ee'
                 ]
             }]
         },
+        options: {
+            plugins: { legend: { position: 'bottom' } },
+            onClick: chartClickHandler
+        }
+    });
+},
         options: {
             plugins: { legend: { position: 'bottom' } },
             onClick: chartClickHandler

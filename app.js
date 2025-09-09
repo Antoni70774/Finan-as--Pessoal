@@ -87,19 +87,15 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAll();
     registerServiceWorker();
 
-    onAuthStateChanged(auth, async (user) => {
-        const authModal = document.getElementById('auth-modal');
-        if (user) {
-            currentUid = user.uid;
-            if (authModal) authModal.style.display = 'none';
-            await firstCloudSync();
-            startRealtimeSync();
-        } else {
-            currentUid = null;
-            stopRealtimeSync();
-            if (authModal) authModal.style.display = 'block';
-        }
-    });
+    onAuthStateChanged(auth, (user) => {
+  const isLogin = window.location.pathname.endsWith('login.html');
+  if (user) {
+    if (isLogin) return window.location.href = 'index.html';
+    // aqui sua lógica de "esconder modal" na página principal
+  } else {
+    if (!isLogin) return window.location.href = 'login.html';
+  }
+});
 
     // garantir que signOut e auth estão importados e disponíveis no app.js
     const logoutBtn = document.getElementById('logout-btn');
@@ -115,41 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
-
-
+    
     const loginEmailBtn = document.getElementById('btn-login-email');
     const signupEmailBtn = document.getElementById('btn-signup-email');
     const resetBtn = document.getElementById('btn-reset');
     const loginGoogleBtn = document.getElementById('btn-login-google');
-
-    if (loginEmailBtn) {
-        loginEmailBtn.onclick = async () => {
-            try {
-                const email = document.getElementById('auth-email').value.trim();
-                const pass = document.getElementById('auth-password').value;
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                console.error('Erro login email:', err);
-                alert(err.message || 'Falha ao realizar login.');
-            }
-        };
-    }
-
-    if (loginGoogleBtn) {
-    loginGoogleBtn.addEventListener('click', async () => {
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user;
-            console.log('Login com Google bem-sucedido:', user);
-            // Redirecionar ou atualizar interface
-            window.location.href = 'index.html';
-        } catch (err) {
-            console.error('Erro ao entrar com Google:', err);
-            alert('Erro ao entrar com Google: ' + (err.message || err));
-        }
-    });
-}
-
 
     if (signupEmailBtn) {
         signupEmailBtn.onclick = async () => {
@@ -458,6 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
             menu.style.display = "none";
         }
     });
+    
     document.getElementById('resumo-prev-month') && document.getElementById('resumo-prev-month').addEventListener('click', () => {
         state.currentDate.setMonth(state.currentDate.getMonth() - 1);
         carregarResumoMensal();

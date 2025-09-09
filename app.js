@@ -87,19 +87,24 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAll();
     registerServiceWorker();
 
-    onAuthStateChanged(auth, async (user) => {
-        const authModal = document.getElementById('auth-modal');
-        if (user) {
-            currentUid = user.uid;
-            if (authModal) authModal.style.display = 'none';
-            await firstCloudSync();
-            startRealtimeSync();
-        } else {
-            currentUid = null;
-            stopRealtimeSync();
-            if (authModal) authModal.style.display = 'block';
-        }
-    });
+    auth.onAuthStateChanged(user => {
+    if (user) {
+        currentUser = user;
+        console.log("Usuário logado:", user.email);
+        document.getElementById('current-user-name').textContent = user.email; // Atualiza o nome do usuário
+        document.getElementById('perfil-usuario').textContent = user.displayName || 'Nome não definido';
+        document.getElementById('perfil-email').textContent = user.email;
+        listenForData();
+        setupChart();
+        refreshDashboard();
+        // Simulação de conexão bancária
+        window.connectBank = (bank) => {
+            document.getElementById('perfil-banco').textContent = bank.charAt(0).toUpperCase() + bank.slice(1);
+            alert(`Conectado ao ${bank.charAt(0).toUpperCase() + bank.slice(1)}! (Simulado)`);
+        };
+    } else {
+        window.location.href = "login.html";
+    }
 
     const loginEmailBtn = document.getElementById('btn-login-email');
     const signupEmailBtn = document.getElementById('btn-signup-email');

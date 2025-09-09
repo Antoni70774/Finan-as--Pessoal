@@ -219,37 +219,65 @@ body {
 }
 
 /* Resumo do Dashboard */
+/* Container principal da seção de resumo */
 .dashboard-summary {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin: 2rem 1rem;
+  align-items: center;       /* Centraliza horizontalmente */
+  gap: 1.5rem;
+  margin: 2rem auto;
+  max-width: 600px;          /* Limita largura total */
+  padding: 0 1rem;
 }
 
+/* Linha horizontal para Receita e Despesa */
 .summary-row {
   display: flex;
   gap: 1rem;
-  justify-content: space-between;
+  justify-content: center;   /* Alinha os cartões lado a lado */
+  width: 100%;
 }
 
+/* Estilo dos cartões */
 .summary-item {
   flex: 1;
+  min-width: 140px;
   padding: 1rem;
-  border-radius: 8px
-  background: transparent; /* sem cor de fundo */
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
+  background: transparent;   /* Sem cor de fundo */
+  border: none;              /* Sem borda */
+  box-shadow: none;          /* Sem sombra */
   text-align: center;
-  border: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
 }
 
-/* Cores específicas removidas */
-.summary-item.saldo,
-.summary-item.receita,
-.summary-item.despesa {
-  background: transparent;
-  color: inherit;
+/* Títulos menores */
+.summary-item span {
+  display: block;
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+/* Valor em destaque */
+.summary-item h4 {
+  font-size: 1.4rem;
+  margin: 0;
+  color: #111;
+}
+
+/* Responsivo: empilha Receita e Despesa no mobile */
+@media (max-width: 600px) {
+  .summary-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .summary-item {
+    width: 100%;
+    max-width: 300px;
+  }
 }
 
 /* Navegação do Mês */

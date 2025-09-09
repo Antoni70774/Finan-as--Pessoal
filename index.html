@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Controle Financeiro</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
 </head>
 <body>
   <div class="app-container">
-    <!-- Header -->
     <header class="app-header">
       <h1>Visão Geral</h1>
       <div class="profile-icon">
@@ -19,7 +18,6 @@
       </div>
     </header>
 
-    <!-- Conteúdo principal -->
     <main id="app-main">
       <!-- Dashboard -->
       <section id="dashboard-page" class="page active">
@@ -30,12 +28,20 @@
         </div>
 
         <div id="dashboard-summary" class="dashboard-summary">
-          <div class="summary-item"><h4>Receita</h4><p id="month-income">R$ 0,00</p></div>
-          <div class="summary-item"><h4>Despesa</h4><p id="month-expense">R$ 0,00</p></div>
-          <div class="summary-item"><h4>Saldo</h4><p id="month-balance">R$ 0,00</p></div>
+          <div class="summary-item">
+            <h4>Receita</h4>
+            <p id="month-income">R$ 0,00</p>
+          </div>
+          <div class="summary-item">
+            <h4>Despesa</h4>
+            <p id="month-expense">R$ 0,00</p>
+          </div>
+          <div class="summary-item">
+            <h4>Saldo</h4>
+            <p id="month-balance">R$ 0,00</p>
+          </div>
         </div>
 
-        <!-- Gráfico principal -->
         <div class="chart-container">
           <h3 id="chart-title">Movimentação por Categoria</h3>
           <canvas id="main-chart"></canvas>
@@ -46,10 +52,8 @@
           </div>
         </div>
 
-        <!-- Resumo por categoria -->
         <section id="category-summary" class="category-grid"></section>
 
-        <!-- Lista de transações -->
         <section class="recent-transactions">
           <h3>Últimas Transações</h3>
           <ul id="transaction-list"></ul>
@@ -81,25 +85,30 @@
         <canvas id="annual-chart"></canvas>
       </section>
 
-      <!-- Configurações -->
+      <!-- Perfil / Config / Sair -->
       <section id="config-page" class="page">
         <h2>Configurações</h2>
-        <button id="export-data-btn" class="btn-secondary">Exportar Dados</button>
-        <button onclick="resetarApp()" class="btn-danger">Resetar App</button>
+        <p>Usuário: <span id="current-user-name">—</span></p>
+        <button id="logout-btn" class="btn-danger">Sair</button>
+        <div style="margin-top:12px;">
+          <button id="export-data-btn" class="btn-secondary">Exportar Dados</button>
+          <button onclick="resetarApp()" class="btn-danger">Resetar App</button>
+        </div>
       </section>
     </main>
 
-    <!-- Barra de navegação -->
+    <!-- Bottom nav -->
     <nav class="bottom-nav">
-      <button class="nav-item active" data-page="dashboard-page"><span class="material-icons-sharp">home</span></button>
-      <button class="nav-item" data-page="goals-page"><span class="material-icons-sharp">flag</span></button>
-      <button id="add-transaction-btn" class="fab"><span class="material-icons-sharp">add</span></button>
-      <button class="nav-item" data-page="payables-page"><span class="material-icons-sharp">receipt</span></button>
-      <button class="nav-item" data-page="config-page"><span class="material-icons-sharp">settings</span></button>
+      <button class="nav-item active" data-page="dashboard-page" title="Início"><span class="material-icons-sharp">home</span></button>
+      <button class="nav-item" data-page="goals-page" title="Metas"><span class="material-icons-sharp">flag</span></button>
+      <button id="add-transaction-btn" class="fab" title="Nova transação"><span class="material-icons-sharp">add</span></button>
+      <button class="nav-item" data-page="payables-page" title="Contas"><span class="material-icons-sharp">receipt</span></button>
+      <button class="nav-item" data-page="resumo-anual-page" title="Anual"><span class="material-icons-sharp">bar_chart</span></button>
+      <button class="nav-item" data-page="config-page" title="Configurações"><span class="material-icons-sharp">settings</span></button>
     </nav>
   </div>
 
-  <!-- Modal de transações -->
+  <!-- Transaction modal (inclui toggle type para evitar erro setTransactionType) -->
   <div id="transaction-modal" class="modal">
     <div class="modal-content">
       <h3 id="transaction-modal-title">Nova Transação</h3>
@@ -127,7 +136,7 @@
     </div>
   </div>
 
-  <!-- Modal de metas -->
+  <!-- Goal modal -->
   <div id="goal-modal" class="modal">
     <div class="modal-content">
       <h3 id="goal-modal-title">Nova Meta Financeira</h3>
@@ -150,7 +159,7 @@
     </div>
   </div>
 
-  <!-- Modal de contas a pagar -->
+  <!-- Payable modal -->
   <div id="payable-modal" class="modal">
     <div class="modal-content">
       <h3 id="payable-modal-title">Nova Conta a Pagar</h3>
@@ -172,8 +181,10 @@
     </div>
   </div>
 
-  <!-- Chart.js deve vir antes do app.js -->
+  <!-- Chart.js precisa vir antes do app.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- app.js deve ser o módulo principal (substitua pelo seu app.js revisado) -->
   <script type="module" src="app.js"></script>
 </body>
 </html>

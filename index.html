@@ -30,18 +30,9 @@
         </div>
 
         <div id="dashboard-summary" class="dashboard-summary">
-          <div class="summary-item">
-            <h4>Receita</h4>
-            <p id="month-income">R$ 0,00</p>
-          </div>
-          <div class="summary-item">
-            <h4>Despesa</h4>
-            <p id="month-expense">R$ 0,00</p>
-          </div>
-          <div class="summary-item">
-            <h4>Saldo</h4>
-            <p id="month-balance">R$ 0,00</p>
-          </div>
+          <div class="summary-item"><h4>Receita</h4><p id="month-income">R$ 0,00</p></div>
+          <div class="summary-item"><h4>Despesa</h4><p id="month-expense">R$ 0,00</p></div>
+          <div class="summary-item"><h4>Saldo</h4><p id="month-balance">R$ 0,00</p></div>
         </div>
 
         <!-- Gráfico principal -->
@@ -114,6 +105,10 @@
       <h3 id="transaction-modal-title">Nova Transação</h3>
       <form id="transaction-form">
         <input type="hidden" id="transaction-id">
+        <div class="toggle-type">
+          <button type="button" id="type-expense-btn" class="toggle-btn active">Despesa</button>
+          <button type="button" id="type-income-btn" class="toggle-btn">Receita</button>
+        </div>
         <input type="hidden" id="transaction-type" value="expense">
         <label>Descrição</label>
         <input type="text" id="description" required>
@@ -177,11 +172,8 @@
     </div>
   </div>
 
-    <!-- Biblioteca Chart.js (precisa vir antes do app.js) -->
+  <!-- Chart.js deve vir antes do app.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-  <!-- Apenas o app.js controla o app -->
   <script type="module" src="app.js"></script>
 </body>
 </html>
-

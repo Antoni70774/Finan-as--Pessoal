@@ -103,35 +103,42 @@ const getChartTitle = (type) => {
 };
 
 const updateChart = (type = 'all') => {
-    const chartTitle = getChartTitle(type);
-    document.getElementById('chart-title').textContent = chartTitle;
-    let filteredTransactions = transactionsData.filter(t => {
-        const transactionDate = new Date(t.date + 'T12:00:00-03:00');
-        return transactionDate.getFullYear() === currentMonth.getFullYear() &&
-               transactionDate.getMonth() === currentMonth.getMonth();
-    });
-    if (type !== 'all') {
-        filteredTransactions = filteredTransactions.filter(t => t.type === type);
-    }
-    const categories = {};
-    filteredTransactions.forEach(t => {
-        categories[t.category] = (categories[t.category] || 0) + parseFloat(t.amount);
-    });
-    const labels = Object.keys(categories);
-    const data = Object.values(categories);
+  const chartTitle = getChartTitle(type);
+  document.getElementById('chart-title').textContent = chartTitle;
 
-    const pastelColors = [
-        '#A3D5FF', '#FFC1CC', '#C1FFD7', '#FFF5BA',
-        '#D5C1FF', '#FFDAC1', '#C1E1FF', '#E2F0CB'
-    ];
-    const backgroundColors = labels.map((_, i) => pastelColors[i % pastelColors.length]);
+  let filteredTransactions = transactionsData.filter(t => {
+    const transactionDate = new Date(t.date + 'T12:00:00-03:00');
+    return transactionDate.getFullYear() === currentMonth.getFullYear() &&
+           transactionDate.getMonth() === currentMonth.getMonth();
+  });
 
-    myChart.data.labels = labels;
-    myChart.data.datasets[0].data = data;
-    myChart.data.datasets[0].backgroundColor = backgroundColors;
-    myChart.update();
-    renderCategorySummary(categories);
+  if (type !== 'all') {
+    filteredTransactions = filteredTransactions.filter(t => t.type === type);
+  }
+
+  const categories = {};
+  filteredTransactions.forEach(t => {
+    const key = `${t.type}:${t.category}`; // separa receita e despesa
+    categories[key] = (categories[key] || 0) + parseFloat(t.amount);
+  });
+
+  const labels = Object.keys(categories).map(key => key.split(':')[1]);
+  const data = Object.values(categories);
+
+  const pastelColors = [
+    '#A3D5FF', '#FFC1CC', '#C1FFD7', '#FFF5BA',
+    '#D5C1FF', '#FFDAC1', '#C1E1FF', '#E2F0CB'
+  ];
+  const backgroundColors = labels.map((_, i) => pastelColors[i % pastelColors.length]);
+
+  myChart.data.labels = labels;
+  myChart.data.datasets[0].data = data;
+  myChart.data.datasets[0].backgroundColor = backgroundColors;
+  myChart.update();
+
+  renderCategorySummary(categories); // passa categorias com tipo incluído
 };
+
 
 const iconMap = {
     // Despesas
@@ -157,23 +164,25 @@ const iconMap = {
 };
 
 const renderCategorySummary = (categories) => {
-    const summaryDiv = document.getElementById('category-summary');
-    summaryDiv.innerHTML = '';
-    summaryDiv.style.display = 'grid';
-    summaryDiv.style.gridTemplateColumns = 'repeat(auto-fit, minmax(120px, 1fr))';
-    summaryDiv.style.gap = '15px';
-    for (const category in categories) {
-        const item = document.createElement('div');
-        item.className = 'summary-item';
-        item.style.textAlign = 'center';
-        item.innerHTML = `
-            <div style="font-size: 1.5rem;">${iconMap[category] ||
-'📦'}</div>
-            <span>${category}</span>
-            <h4>${formatCurrency(categories[category])}</h4>
-        `;
-        summaryDiv.appendChild(item);
-    }
+  const summaryDiv = document.getElementById('category-summary');
+  summaryDiv.innerHTML = '';
+  summaryDiv.style.display = 'grid';
+  summaryDiv.style.gridTemplateColumns = 'repeat(auto-fit, minmax(120px, 1fr))';
+  summaryDiv.style.gap = '15px';
+
+  for (const key in categories) {
+    const [type, category] = key.includes(':') ? key.split(':') : ['expense', key];
+    const icon = iconMap[category] || '📦';
+    const item = document.createElement('div');
+    item.className = 'summary-item';
+    item.style.textAlign = 'center';
+    item.innerHTML = `
+      <div style="font-size: 1.5rem;">${icon}</div>
+      <span>${category} (${type === 'income' ? 'Receita' : 'Despesa'})</span>
+      <h4>${formatCurrency(categories[key])}</h4>
+    `;
+    summaryDiv.appendChild(item);
+  }
 };
 
 const calculateDashboardData = () => {
@@ -403,28 +412,39 @@ const markPayableAsPaid = async (id) => {
 // 🖥️ Lógica da UI
 // ----------------------
 
-const populateCategories = () => {
-    const select = document.getElementById('category');
-    select.innerHTML = '';
-    const categories = [
-        "Alimentação", "Transporte", "Moradia", "Lazer", "Saúde", "Educação",
-        "Salário", "Freelance", "Rendimentos", "Presentes", "Outros"
-    ];
-    categories.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat;
-        option.textContent = cat;
-        select.appendChild(option);
-    });
+// Categorias separadas por tipo
+const expenseCategories = [
+  "Alimentação", "Transporte", "Moradia", "Lazer", "Saúde", "Empréstimo",
+  "Cartão de Crédito", "Energia", "Água", "Gás", "Internet", "Investimento", "Outros"
+];
+
+const incomeCategories = [
+  "Salário", "Combustível", "Aluguel", "Outras Entradas"
+];
+
+// Preenche o campo de categoria com base no tipo
+const populateCategories = (type = 'expense') => {
+  const select = document.getElementById('category');
+  select.innerHTML = '';
+  const categories = type === 'income' ? incomeCategories : expenseCategories;
+  categories.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat;
+    select.appendChild(option);
+  });
 };
 
+// Abre o modal de transação e aplica categorias filtradas
 const openTransactionModal = (transaction = null) => {
   const modal = document.getElementById('transaction-modal');
   const form = document.getElementById('transaction-form');
   const title = document.getElementById('transaction-modal-title');
   const deleteBtn = document.getElementById('delete-transaction-btn');
   form.reset();
-  populateCategories();
+
+  const type = transaction ? transaction.type : 'expense';
+  populateCategories(type);
 
   if (transaction) {
     title.textContent = 'Editar Transação';
@@ -446,18 +466,21 @@ const openTransactionModal = (transaction = null) => {
     deleteBtn.style.display = 'none';
     document.getElementById('date').valueAsDate = new Date();
   }
+
   modal.classList.add('active');
 };
 
+// Fecha o modal
 const closeTransactionModal = () => {
-    document.getElementById('transaction-modal').classList.remove('active');
+  document.getElementById('transaction-modal').classList.remove('active');
 };
 
+// Edita transação existente
 const editTransaction = (id) => {
-    const transaction = transactionsData.find(t => t.id === id);
-    if (transaction) {
-        openTransactionModal(transaction);
-    }
+  const transaction = transactionsData.find(t => t.id === id);
+  if (transaction) {
+    openTransactionModal(transaction);
+  }
 };
 
 const openGoalModal = (goal = null) => {

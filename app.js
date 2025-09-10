@@ -483,6 +483,22 @@ const editTransaction = (id) => {
   }
 };
 
+// Botões de tipo de transação
+document.getElementById('type-expense-btn').addEventListener('click', () => {
+  document.getElementById('transaction-type').value = 'expense';
+  document.getElementById('type-expense-btn').classList.add('active');
+  document.getElementById('type-income-btn').classList.remove('active');
+  populateCategories('expense');
+});
+
+document.getElementById('type-income-btn').addEventListener('click', () => {
+  document.getElementById('transaction-type').value = 'income';
+  document.getElementById('type-income-btn').classList.add('active');
+  document.getElementById('type-expense-btn').classList.remove('active');
+  populateCategories('income');
+});
+
+
 const openGoalModal = (goal = null) => {
     const modal = document.getElementById('goal-modal');
     const form = document.getElementById('goal-form');

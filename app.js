@@ -171,14 +171,16 @@ const renderCategorySummary = (categories) => {
   summaryDiv.style.gap = '15px';
 
   for (const key in categories) {
-    const [type, category] = key.includes(':') ? key.split(':') : ['expense', key];
+    // Remove o tipo da chave, se estiver presente (ex: "income:Salário" → "Salário")
+    const category = key.includes(':') ? key.split(':')[1] : key;
     const icon = iconMap[category] || '📦';
+
     const item = document.createElement('div');
     item.className = 'summary-item';
     item.style.textAlign = 'center';
     item.innerHTML = `
       <div style="font-size: 1.5rem;">${icon}</div>
-      <span>${category} (${type === 'income' ? 'Receita' : 'Despesa'})</span>
+      <span>${category}</span>
       <h4>${formatCurrency(categories[key])}</h4>
     `;
     summaryDiv.appendChild(item);

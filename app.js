@@ -265,28 +265,29 @@ const renderGoals = () => {
 
     const ctx = document.getElementById(`goal-chart-${goal.id}`).getContext('2d');
     new Chart(ctx, {
-  type: 'doughnut',
-  data: {
-    // ← remove os labels para não aparecer % no centro
-    datasets: [{
-      data: [current, remaining],
-      backgroundColor: ['#4CAF50', '#FFC107'],
-      borderWidth: 1
-    }]
-  },
-  options: {
-    responsive: false,
-    cutout: '70%', // furo maior = não mostra label interno
-    plugins: {
-      legend: { position: 'bottom' },
-      tooltip: {
-        callbacks: {
-          label: (tooltipItem) => `${tooltipItem.label}: ${formatCurrency(tooltipItem.raw)}`
+      type: 'doughnut',
+      data: {
+        // ← remove os labels para não aparecer % no centro
+        datasets: [{
+          data: [current, remaining],
+          backgroundColor: ['#4CAF50', '#FFC107'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: false,
+        cutout: '70%', // furo maior = não mostra label interno
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: (tooltipItem) => `${tooltipItem.label}: ${formatCurrency(tooltipItem.raw)}`
+            }
+          }
         }
       }
-    }
-  }
-});
+    });
+
 
 const renderPayables = () => {
   const list = document.getElementById('payable-list');

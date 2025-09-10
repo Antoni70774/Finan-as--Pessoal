@@ -506,6 +506,26 @@ section {
     color: var(--text-light);
 }
 
+.goal-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.goal-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.goal-chart {
+    width: 180px;
+    height: 180px;
+    flex-shrink: 0;
+}
+
+
 /* Contas a Pagar */
 .payable-item {
     display: flex;

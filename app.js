@@ -254,6 +254,7 @@ const renderPayables = () => {
   today.setHours(0, 0, 0, 0);
 
   payablesData.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
   const categoryIcons = {
     'Alimentação': '🍽️',
     'Transporte': '🚌',
@@ -269,10 +270,12 @@ const renderPayables = () => {
     'Investimento': '📉',
     'Outros': '📦'
   };
+
   payablesData.forEach(payable => {
     const dueDate = new Date(payable.dueDate + 'T00:00:00');
     const isOverdue = dueDate < today && !payable.paid;
     const isToday = dueDate.getTime() === today.getTime();
+
     const item = document.createElement('div');
     item.className = 'payable-item';
     if (isOverdue) item.classList.add('overdue');
@@ -296,12 +299,28 @@ const renderPayables = () => {
     `;
     list.appendChild(item);
 
-    // Alternar status de pagamento ao clicar
+    // Alternar status de pagamento
     item.querySelector('.btn-check').addEventListener('click', () => {
       payable.paid = !payable.paid;
-      renderPayables(); // Re-renderiza para atualizar visual
+      renderPayables();
     });
-});
+
+    // Editar conta
+    item.querySelector('.btn-edit-payable').addEventListener('click', () => {
+      editPayable(payable.id);
+    });
+
+    // Excluir conta
+    item.querySelector('.btn-delete-payable').addEventListener('click', () => {
+      if (confirm("Tem certeza que deseja excluir esta conta?")) {
+        const index = payablesData.findIndex(p => p.id === payable.id);
+        if (index !== -1) {
+          payablesData.splice(index, 1);
+          renderPayables();
+        }
+      }
+    });
+  });
 };
 
 const updateAlertBadge = () => {
@@ -882,14 +901,6 @@ window.trocarTema = () => {
 window.resetarApp = () => {
     alert('Funcionalidade de resetar app não implementada.');
 };
-
-window.deletePayable = function(id) {
-  if (confirm("Tem certeza que deseja excluir esta conta?")) {
-    state.payables = state.payables.filter(p => p.id !== id);
-    saveAndRerender();
-  }
-};
-
 
 window.abrirAlerta = openAlertModal;
 window.fecharAlerta = closeAlertModal;

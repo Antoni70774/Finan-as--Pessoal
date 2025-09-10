@@ -24,7 +24,10 @@ export function createExpenseChart() {
             }]
         },
         options: {
-            plugins: { legend: { position: 'bottom' } },
+            plugins: {
+              legend: {
+                display: false
+              },
             onClick: chartClickHandler
         }
     });

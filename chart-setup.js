@@ -6,31 +6,38 @@ let lastTransactions = [];
  * Deve ser chamado apenas uma vez na inicialização do app.
  */
 export function createExpenseChart() {
-    const ctx = document.getElementById('main-chart').getContext('2d');
-    chartInstance = new window.Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: [],
-            datasets: [{
-                data: [],
-                backgroundColor: [
-                    '#4A90E2', // Azul
-                    '#2bc47d', // Verde
-                    '#ff3d3d', // Vermelho
-                    '#ffd700', // Amarelo
-                    '#ff8a80', // Rosa
-                    '#e6f7ee'  // Verde claro
-                ]
-            }]
+  const ctx = document.getElementById('main-chart').getContext('2d');
+  chartInstance = new window.Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: [], // categorias
+      datasets: [{
+        data: [], // valores por categoria
+        backgroundColor: [
+          '#4A90E2', // Azul
+          '#2bc47d', // Verde
+          '#ff3d3d', // Vermelho
+          '#ffd700', // Amarelo
+          '#ff8a80', // Rosa
+          '#e6f7ee'  // Verde claro
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false // ❌ remove legenda
         },
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            enabled: false
-          }
-        },
+        tooltip: {
+          enabled: false // ❌ remove tooltip
+        }
+      },
+      onClick: chartClickHandler
+    }
+  });
 }
 
 /**
@@ -40,14 +47,18 @@ export function createExpenseChart() {
  * @param {Array} categories - Array de categorias (despesa ou receita)
  */
 export function updateExpenseChart(transactions, categories) {
-    if (!chartInstance) return;
-    lastTransactions = transactions;
-    const data = categories.map(cat =>
-        transactions.filter(t => t.category === cat).reduce((sum, t) => sum + t.amount, 0)
-    );
-    chartInstance.data.labels = categories;
-    chartInstance.data.datasets[0].data = data;
-    chartInstance.update();
+  if (!chartInstance) return;
+  lastTransactions = transactions;
+
+  const data = categories.map(cat =>
+    transactions
+      .filter(t => t.category === cat)
+      .reduce((sum, t) => sum + t.amount, 0)
+  );
+
+  chartInstance.data.labels = categories;
+  chartInstance.data.datasets[0].data = data;
+  chartInstance.update();
 }
 
 /**
@@ -55,11 +66,12 @@ export function updateExpenseChart(transactions, categories) {
  * Mostra detalhes dos lançamentos da categoria clicada.
  */
 function chartClickHandler(evt, elements) {
-    if (!elements.length) return;
-    const idx = elements[0].index;
-    const cat = chartInstance.data.labels[idx];
-    const filtered = lastTransactions.filter(t => t.category === cat);
-    if (typeof window.showChartDetails === "function") {
-        window.showChartDetails(cat, filtered);
-    }
+  if (!elements.length) return;
+  const idx = elements[0].index;
+  const cat = chartInstance.data.labels[idx];
+  const filtered = lastTransactions.filter(t => t.category === cat);
+
+  if (typeof window.showChartDetails === "function") {
+    window.showChartDetails(cat, filtered);
+  }
 }

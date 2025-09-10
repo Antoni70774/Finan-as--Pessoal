@@ -532,6 +532,9 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.goal-item {
   overflow: hidden;
 }
 

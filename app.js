@@ -247,19 +247,22 @@ const renderGoals = () => {
     item.className = 'goal-item';
     item.setAttribute('data-id', goal.id);
     item.innerHTML = `
-      <h4>${goal.name}</h4>
-      <canvas id="goal-chart-${goal.id}" width="180" height="180"></canvas>
-      <div class="goal-amounts">
-        <span>Meta: ${formatCurrency(target)}</span>
-        <span>Guardado: ${formatCurrency(current)}</span>
-        <span>Falta: ${formatCurrency(remaining)}</span>
-        <span>Prazo: ${formatDate(goal.date)}</span>
+      <div class="goal-content">
+        <div class="goal-info">
+          <h4>${goal.name}</h4>
+          <p><strong>Meta:</strong> ${formatCurrency(target)}</p>
+          <p><strong>Guardado:</strong> ${formatCurrency(current)}</p>
+          <p><strong>Falta:</strong> ${formatCurrency(remaining)}</p>
+          <p><strong>Prazo:</strong> ${formatDate(goal.date)}</p>
+        </div>
+        <div class="goal-chart">
+          <canvas id="goal-chart-${goal.id}" width="180" height="180"></canvas>
+        </div>
       </div>
     `;
     item.addEventListener('click', () => editGoal(goal.id));
     list.appendChild(item);
 
-    // Gráfico circular de progresso
     const ctx = document.getElementById(`goal-chart-${goal.id}`).getContext('2d');
     new Chart(ctx, {
       type: 'doughnut',

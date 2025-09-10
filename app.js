@@ -254,7 +254,6 @@ const renderPayables = () => {
   today.setHours(0, 0, 0, 0);
 
   payablesData.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-
   const categoryIcons = {
     'Alimentação': '🍽️',
     'Transporte': '🚌',
@@ -270,12 +269,10 @@ const renderPayables = () => {
     'Investimento': '📉',
     'Outros': '📦'
   };
-
   payablesData.forEach(payable => {
     const dueDate = new Date(payable.dueDate + 'T00:00:00');
     const isOverdue = dueDate < today && !payable.paid;
     const isToday = dueDate.getTime() === today.getTime();
-
     const item = document.createElement('div');
     item.className = 'payable-item';
     if (isOverdue) item.classList.add('overdue');
@@ -299,32 +296,12 @@ const renderPayables = () => {
     `;
     list.appendChild(item);
 
-    // Alternar status de pagamento
+    // Alternar status de pagamento ao clicar
     item.querySelector('.btn-check').addEventListener('click', () => {
       payable.paid = !payable.paid;
-      saveAndRerender(); // salva e atualiza
+      renderPayables(); // Re-renderiza para atualizar visual
     });
-
-    // Editar conta
-    item.querySelector('.btn-edit-payable').addEventListener('click', () => {
-      editPayable(payable.id);
-    });
-
-    // Excluir conta com persistência
-    item.querySelector('.btn-delete-payable').addEventListener('click', () => {
-      if (confirm("Tem certeza que deseja excluir esta conta?")) {
-        const index = state.payables.findIndex(p => p.id === payable.id);
-        if (index !== -1) {
-          state.payables.splice(index, 1); // remove do estado global
-          localStorage.setItem('payables', JSON.stringify(state.payables)); // salva localmente
-          if (typeof saveAllToCloud === 'function' && currentUid) {
-            saveAllToCloud(); // sincroniza com Firebase
-          }
-          renderPayables(); // atualiza interface
-        }
-      }
-    });
-  });
+});
 };
 
 const updateAlertBadge = () => {

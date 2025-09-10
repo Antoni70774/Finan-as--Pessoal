@@ -233,15 +233,20 @@ const renderTransactions = () => {
     });
 };
 
+
+// ==============================
+// 🔹 Metas (Goals)
+// ==============================
 const renderGoals = () => {
   const list = document.getElementById('goal-list');
   list.innerHTML = '';
-
   goalsData.forEach(goal => {
     const current = parseFloat(goal.current);
     const target = parseFloat(goal.target);
     const remaining = Math.max(target - current, 0);
-    const progressPercent = Math.min((current / target) * 100, 100).toFixed(1);
+    // calcula quanto precisa guardar por mês até a data
+    const meses = Math.max(1, Math.ceil((new Date(goal.date) - new Date()) / (30*24*60*60*1000)));
+    const metaMensal = remaining / meses;
 
     const item = document.createElement('div');
     item.className = 'goal-item';
@@ -253,6 +258,7 @@ const renderGoals = () => {
           <p><strong>Meta:</strong> ${formatCurrency(target)}</p>
           <p><strong>Guardado:</strong> ${formatCurrency(current)}</p>
           <p><strong>Falta:</strong> ${formatCurrency(remaining)}</p>
+          <p><strong>Precisa guardar/mês:</strong> ${formatCurrency(metaMensal)}</p>
           <p><strong>Prazo:</strong> ${formatDate(goal.date)}</p>
         </div>
         <div class="goal-chart">
@@ -267,7 +273,6 @@ const renderGoals = () => {
     new Chart(ctx, {
       type: 'doughnut',
       data: {
-        // ← remove os labels para não aparecer % no centro
         datasets: [{
           data: [current, remaining],
           backgroundColor: ['#4CAF50', '#FFC107'],
@@ -276,17 +281,15 @@ const renderGoals = () => {
       },
       options: {
         responsive: false,
-        cutout: '70%', // furo maior = não mostra label interno
+        cutout: '70%',
         plugins: {
           legend: { position: 'bottom' },
-          tooltip: {
-            callbacks: {
-              label: (tooltipItem) => `${tooltipItem.label}: ${formatCurrency(tooltipItem.raw)}`
-            }
-          }
+          tooltip: { callbacks: { label: t => `${t.label}: ${formatCurrency(t.raw)}` } }
         }
       }
     });
+  });
+};
 
 
 const renderPayables = () => {

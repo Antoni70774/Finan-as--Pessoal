@@ -256,7 +256,7 @@ const renderGoals = () => {
           <p><strong>Prazo:</strong> ${formatDate(goal.date)}</p>
         </div>
         <div class="goal-chart">
-          <canvas id="goal-chart-${goal.id}" width="180" height="180"></canvas>
+          <canvas id="goal-chart-${goal.id}" width="100" height="100"></canvas>
         </div>
       </div>
     `;

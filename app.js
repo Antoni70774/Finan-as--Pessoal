@@ -313,10 +313,10 @@ const renderPayables = () => {
     // Excluir conta com persistência
     item.querySelector('.btn-delete-payable').addEventListener('click', () => {
       if (confirm("Tem certeza que deseja excluir esta conta?")) {
-        const index = payablesData.findIndex(p => p.id === payable.id);
+        const index = state.payables.findIndex(p => p.id === payable.id);
         if (index !== -1) {
-          payablesData.splice(index, 1);
-          localStorage.setItem('payables', JSON.stringify(payablesData));
+          state.payables.splice(index, 1); // remove do estado global
+          localStorage.setItem('payables', JSON.stringify(state.payables)); // salva localmente
           if (typeof saveAllToCloud === 'function' && currentUid) {
             saveAllToCloud(); // sincroniza com Firebase
           }

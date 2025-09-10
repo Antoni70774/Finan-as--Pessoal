@@ -883,6 +883,14 @@ window.resetarApp = () => {
     alert('Funcionalidade de resetar app não implementada.');
 };
 
+window.deletePayable = function(id) {
+  if (confirm("Tem certeza que deseja excluir esta conta?")) {
+    state.payables = state.payables.filter(p => p.id !== id);
+    saveAndRerender();
+  }
+};
+
+
 window.abrirAlerta = openAlertModal;
 window.fecharAlerta = closeAlertModal;
 

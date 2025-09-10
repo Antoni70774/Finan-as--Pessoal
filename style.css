@@ -521,8 +521,9 @@ section {
 
 @media (max-width: 600px) {
   .goal-content {
-    flex-wrap: wrap; /* permite empilhar em telas pequenas */
+    flex-wrap: wrap;
   }
+}
     
 .goal-chart {
   width: 70px;
@@ -533,7 +534,6 @@ section {
   justify-content: center;
   overflow: hidden;
 }
-
 
 /* Contas a Pagar */
 .payable-item {

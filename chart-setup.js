@@ -23,10 +23,14 @@ export function createExpenseChart() {
                 ]
             }]
         },
-        plugins: { legend: { position: 'bottom' } },
-            onClick: chartClickHandler
-        }
-    });
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: false
+          }
+        },
 }
 
 /**

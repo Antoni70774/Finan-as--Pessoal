@@ -302,7 +302,7 @@ const renderPayables = () => {
     // Alternar status de pagamento
     item.querySelector('.btn-check').addEventListener('click', () => {
       payable.paid = !payable.paid;
-      renderPayables();
+      saveAndRerender(); // salva e atualiza
     });
 
     // Editar conta
@@ -310,13 +310,17 @@ const renderPayables = () => {
       editPayable(payable.id);
     });
 
-    // Excluir conta
+    // Excluir conta com persistência
     item.querySelector('.btn-delete-payable').addEventListener('click', () => {
       if (confirm("Tem certeza que deseja excluir esta conta?")) {
         const index = payablesData.findIndex(p => p.id === payable.id);
         if (index !== -1) {
           payablesData.splice(index, 1);
-          renderPayables();
+          localStorage.setItem('payables', JSON.stringify(payablesData));
+          if (typeof saveAllToCloud === 'function' && currentUid) {
+            saveAllToCloud(); // sincroniza com Firebase
+          }
+          renderPayables(); // atualiza interface
         }
       }
     });

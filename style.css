@@ -514,6 +514,13 @@ section {
   flex-wrap: wrap; /* impede quebra de linha em telas largas */
 }
 
+.goal-content.vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 .goal-info {
     flex: 1;
     min-width: 200px;
@@ -526,9 +533,9 @@ section {
 }
     
 .goal-chart {
-  width: 70px;
-  height: 70px;
-  flex-shrink: 0;
+  margin-bottom: 15px;
+  width: 100px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -638,6 +638,23 @@ const renderMonthlyChart = () => {
     });
 };
 
+
+const renderMonthlyCategoryChart = () => {
+  const ctx=document.getElementById('monthly-category-chart').getContext('2d');
+  const filtered=transactionsData.filter(t=>{
+    const d=new Date(t.date+'T12:00:00-03:00');
+    return t.type==='expense' && d.getMonth()===currentMonth.getMonth() && d.getFullYear()===currentMonth.getFullYear();
+  });
+  const cats={}; filtered.forEach(t=>cats[t.category]=(cats[t.category]||0)+parseFloat(t.amount));
+  if(window.monthlyCategoryChart)window.monthlyCategoryChart.destroy();
+  window.monthlyCategoryChart=new Chart(ctx,{
+    type:'pie',
+    data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats),backgroundColor:['#A3D5FF','#FFC1CC','#C1FFD7','#FFF5BA','#D5C1FF','#FFDAC1']}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ti=>`${ti.label}: ${formatCurrency(ti.raw)}`}}}}
+  });
+};
+
+
 const renderAnnualChart = () => {
     const ctx = document.getElementById('annual-chart').getContext('2d');
     const monthlyData = calculateMonthlyTotals();
@@ -924,6 +941,7 @@ window.abrirResumoMensal = () => {
     showPage('resumo-mensal-page');
     updateMonthlySummary(currentMonth);
     renderMonthlyChart();
+    renderMonthlyCategoryChart();
 };
 
 window.abrirResumoAnual = () => {

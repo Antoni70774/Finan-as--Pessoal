@@ -289,25 +289,29 @@
         </div>
          <!-- Página: Resumo Mensal -->
         <div id="resumo-mensal-page" class="page">
-          <div class="resumo-mensal-top">
-            <h2>📅 Resumo Mensal</h2>
-            <p><strong>Mês:</strong> <span id="mes-atual"></span></p>
-        
-            <div class="dashboard-summary" id="resumo-mensal-summary">
-              <div class="summary-item">
-                <span>Receita</span>
-                <h4 id="monthly-revenue">R$ 0,00</h4>
-              </div>
-              <div class="summary-item">
-                <span>Despesa</span>
-                <h4 id="monthly-expense">R$ 0,00</h4>
-              </div>
-              <div class="summary-item">
-                <span>Saldo</span>
-                <h4 id="monthly-balance">R$ 0,00</h4>
-              </div>
+           <h2>📅 Resumo Mensal</h2>
+          <div id="resumo-mensal-summary" class="summary-boxes">
+            <div class="summary-item">
+              <h4>Receita</h4>
+              <p id="monthly-revenue">R$ 0,00</p>
             </div>
+            <div class="summary-item">
+              <h4>Despesa</h4>
+              <p id="monthly-expense">R$ 0,00</p>
+            </div>
+            <div class="summary-item">
+              <h4>Saldo</h4>
+              <p id="monthly-balance">R$ 0,00</p>
+            </div>
+          </div>
         
+          <h3>Ranking de Categorias</h3>
+          <canvas id="monthly-ranking-chart"></canvas>
+        
+          <h3>Despesas por Categoria</h3>
+          <canvas id="monthly-category-chart"></canvas>
+        </div>
+
             <div class="chart-container">
               <h3>Gastos por Seção</h3>
               <canvas id="monthly-category-chart"></canvas>

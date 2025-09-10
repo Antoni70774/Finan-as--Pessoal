@@ -507,11 +507,11 @@ section {
 }
 
 .goal-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* melhor alinhamento vertical */
+  gap: 20px;
+  flex-wrap: nowrap; /* impede quebra de linha em telas largas */
 }
 
 .goal-info {
@@ -519,10 +519,18 @@ section {
     min-width: 200px;
 }
 
+@media (max-width: 600px) {
+  .goal-content {
+    flex-wrap: wrap; /* permite empilhar em telas pequenas */
+  }
+    
 .goal-chart {
-    width: 180px;
-    height: 180px;
-    flex-shrink: 0;
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 

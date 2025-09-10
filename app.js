@@ -267,7 +267,7 @@ const renderGoals = () => {
     new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: ['Guardado', 'Faltando'],
+        // ← remove os labels para não aparecer % no centro
         datasets: [{
           data: [current, remaining],
           backgroundColor: ['#4CAF50', '#FFC107'],
@@ -276,22 +276,17 @@ const renderGoals = () => {
       },
       options: {
         responsive: false,
+        cutout: '70%', // furo maior = não mostra label interno
         plugins: {
+          legend: { position: 'bottom' },
           tooltip: {
             callbacks: {
-              label: function(tooltipItem) {
-                return `${tooltipItem.label}: ${formatCurrency(tooltipItem.raw)}`;
-              }
+              label: (tooltipItem) => `${tooltipItem.label}: ${formatCurrency(tooltipItem.raw)}`
             }
-          },
-          legend: {
-            position: 'bottom'
           }
         }
       }
     });
-  });
-};
 
 const renderPayables = () => {
   const list = document.getElementById('payable-list');

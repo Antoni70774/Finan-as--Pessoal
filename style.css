@@ -511,7 +511,7 @@ section {
   justify-content: space-between;
   align-items: flex-start; /* melhor alinhamento vertical */
   gap: 20px;
-  flex-wrap: nowrap; /* impede quebra de linha em telas largas */
+  flex-wrap: wrap; /* impede quebra de linha em telas largas */
 }
 
 .goal-info {
@@ -531,6 +531,7 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 

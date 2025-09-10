@@ -234,28 +234,60 @@ const renderTransactions = () => {
 };
 
 const renderGoals = () => {
-    const list = document.getElementById('goal-list');
-    list.innerHTML = '';
-    goalsData.forEach(goal => {
-        const progress = (parseFloat(goal.current) / parseFloat(goal.target)) * 100;
-        const progressClamped = Math.min(Math.max(progress, 0), 100);
-        const item = document.createElement('div');
-        item.className = 'goal-item';
-        item.setAttribute('data-id', goal.id);
-        item.innerHTML = `
-            <h4>${goal.name}</h4>
-            <div class="goal-amounts">
-                <span>Meta: ${formatCurrency(parseFloat(goal.target))}</span>
-                <span>Atual: ${formatCurrency(parseFloat(goal.current))}</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: ${progressClamped}%;"></div>
-            </div>
-            <span class="goal-progress-text">${progressClamped.toFixed(0)}% (${formatDate(goal.date)})</span>
-        `;
-        item.addEventListener('click', () => editGoal(goal.id));
-        list.appendChild(item);
+  const list = document.getElementById('goal-list');
+  list.innerHTML = '';
+
+  goalsData.forEach(goal => {
+    const current = parseFloat(goal.current);
+    const target = parseFloat(goal.target);
+    const remaining = Math.max(target - current, 0);
+    const progressPercent = Math.min((current / target) * 100, 100).toFixed(1);
+
+    const item = document.createElement('div');
+    item.className = 'goal-item';
+    item.setAttribute('data-id', goal.id);
+    item.innerHTML = `
+      <h4>${goal.name}</h4>
+      <canvas id="goal-chart-${goal.id}" width="180" height="180"></canvas>
+      <div class="goal-amounts">
+        <span>Meta: ${formatCurrency(target)}</span>
+        <span>Guardado: ${formatCurrency(current)}</span>
+        <span>Falta: ${formatCurrency(remaining)}</span>
+        <span>Prazo: ${formatDate(goal.date)}</span>
+      </div>
+    `;
+    item.addEventListener('click', () => editGoal(goal.id));
+    list.appendChild(item);
+
+    // Gráfico circular de progresso
+    const ctx = document.getElementById(`goal-chart-${goal.id}`).getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Guardado', 'Faltando'],
+        datasets: [{
+          data: [current, remaining],
+          backgroundColor: ['#4CAF50', '#FFC107'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(tooltipItem) {
+                return `${tooltipItem.label}: ${formatCurrency(tooltipItem.raw)}`;
+              }
+            }
+          },
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
     });
+  });
 };
 
 const renderPayables = () => {

@@ -417,6 +417,7 @@ const listenForData = () => {
     onSnapshot(transactionsRef, (snapshot) => {
         transactionsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         refreshDashboard();
+        updateChart();
         updateMonthlySummary(currentMonth); // se ainda usa
         renderMonthlyChart();
         renderMonthlyRankingChart();

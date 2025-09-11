@@ -38,6 +38,53 @@ const formatter = new Intl.NumberFormat('pt-BR', {
     currency: 'BRL',
 });
 
+// 🔒 Bloqueio local
+document.addEventListener('DOMContentLoaded', () => {
+  // Esconde o app-container até desbloquear
+  document.querySelector('.app-container').style.display = 'none';
+  document.getElementById('lock-screen').style.display = 'flex';
+});
+
+// PIN salvo localmente (ou pegue do Firestore criptografado)
+const savedPin = localStorage.getItem('appPin') || '1234';
+
+// Desbloqueio por PIN
+window.unlockWithPin = () => {
+  const entered = document.getElementById('lock-pin').value;
+  if (entered === savedPin) {
+    unlockApp();
+  } else {
+    alert('PIN incorreto');
+  }
+};
+
+// Desbloqueio por biometria
+window.unlockWithBiometrics = async () => {
+  if (!('credentials' in navigator)) {
+    alert('Biometria não suportada neste dispositivo');
+    return;
+  }
+  try {
+    // WebAuthn simplificado: requer HTTPS
+    await navigator.credentials.get({
+      publicKey: {
+        challenge: new Uint8Array(32),
+        userVerification: 'required',
+        timeout: 60000
+      }
+    });
+    unlockApp();
+  } catch (err) {
+    alert('Falha na biometria: ' + err);
+  }
+};
+
+function unlockApp() {
+  document.getElementById('lock-screen').style.display = 'none';
+  document.querySelector('.app-container').style.display = 'block';
+}
+
+
 // ----------------------
 // 🌍 Funções de Utilidade
 // ----------------------

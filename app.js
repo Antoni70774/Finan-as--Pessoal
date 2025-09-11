@@ -370,10 +370,12 @@ const listenForData = () => {
     onSnapshot(transactionsRef, (snapshot) => {
         transactionsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         refreshDashboard();
-        updateMonthlySummary(currentMonth);
+        updateMonthlySummary(currentMonth); // se ainda usa
+        renderMonthlyChart();
         renderMonthlyRankingChart();
         renderMonthlyCategoryChart();
     });
+
     const goalsRef = collection(db, `users/${user.uid}/goals`);
     onSnapshot(goalsRef, (snapshot) => {
         goalsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -628,16 +630,41 @@ const updateMonthlySummary = (date) => {
 // 🔹 Resumo Mensal – gráficos
 // ==============================
 const renderMonthlyChart = () => {
-  const ctx=document.getElementById('monthly-bar-chart').getContext('2d');
-  const filtered=transactionsData.filter(t=>{
+  const ctx = document.getElementById('monthly-bar-chart').getContext('2d');
+  const filtered = transactionsData.filter(t=>{
     const d=new Date(t.date+'T12:00:00-03:00');
     return d.getFullYear()===currentMonth.getFullYear() && d.getMonth()===currentMonth.getMonth();
   });
-  const income=filtered.filter(t=>t.type==='income').reduce((s,t)=>s+parseFloat(t.amount),0);
-  const expense=filtered.filter(t=>t.type==='expense').reduce((s,t)=>s+parseFloat(t.amount),0);
-  document.getElementById('monthly-revenue').textContent=formatCurrency(income);
-  document.getElementById('monthly-expense').textContent=formatCurrency(expense);
-  document.getElementById('monthly-balance').textContent=formatCurrency(income-expense);
+  const income = filtered.filter(t=>t.type==='income').reduce((s,t)=>s+parseFloat(t.amount),0);
+  const expense = filtered.filter(t=>t.type==='expense').reduce((s,t)=>s+parseFloat(t.amount),0);
+
+  // atualiza os cards
+  document.getElementById('monthly-revenue').textContent = formatCurrency(income);
+  document.getElementById('monthly-expense').textContent = formatCurrency(expense);
+  document.getElementById('monthly-balance').textContent = formatCurrency(income-expense);
+
+  // destrói gráfico anterior se houver
+  if (window.monthlyBarChart) window.monthlyBarChart.destroy();
+
+  // cria gráfico de barras
+  window.monthlyBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Receita', 'Despesa'],
+      datasets: [{
+        data: [income, expense],
+        backgroundColor: ['#4CAF50','#FF5722']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ti => formatCurrency(ti.raw) } }
+      },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
 };
 
 const renderMonthlyRankingChart = () => {

@@ -87,6 +87,7 @@
     <input type="password" id="lock-pin" placeholder="Digite seu PIN" maxlength="6">
     <button onclick="unlockWithPin()">Desbloquear</button>
     <button onclick="unlockWithBiometrics()">Usar biometria</button>
+    <button onclick="irParaConfiguracoes()">⚙️ Configurar PIN/Biometria</button>
   </div>
 
   <div class="app-container">
@@ -391,5 +392,35 @@
 
   <!-- Seu app.js -->
  <script type="module" src="./app.js"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        const uid = user.uid;
+        const hasPin = localStorage.getItem(`pin_${uid}`);
+        const hasBiometry = localStorage.getItem(`biometry_${uid`);
+  
+        if (hasPin || hasBiometry) {
+          showPage('lock-screen');
+        } else {
+          // Redireciona para configuração se não houver segurança definida
+          alert('Você ainda não definiu um PIN ou biometria. Vá para Configurações.');
+          showPage('config-page');
+        }
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+  });
+
+  function showPage(id) {
+    document.querySelectorAll('div.page, div.lock-screen').forEach(div => {
+      div.style.display = 'none';
+    });
+    document.getElementById(id).style.display = 'block';
+  }
+  </script>
+
 </body>
 </html>

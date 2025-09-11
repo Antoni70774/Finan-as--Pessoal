@@ -38,51 +38,119 @@ const formatter = new Intl.NumberFormat('pt-BR', {
     currency: 'BRL',
 });
 
-// 🔒 Bloqueio local
+// ==============================================
+// 🔐 BLOQUEIO E DESBLOQUEIO LOCAL (CÓDIGO CORRIGIDO)
+// ==============================================
+
+// Mostra a tela de bloqueio assim que a página carregar
 document.addEventListener('DOMContentLoaded', () => {
-  // Esconde o app-container até desbloquear
-  document.querySelector('.app-container').style.display = 'none';
-  document.getElementById('lock-screen').style.display = 'flex';
+  const appContainer = document.querySelector('.app-container');
+  if (appContainer) appContainer.style.display = 'none';
+  
+  const lockScreen = document.getElementById('lock-screen');
+  if (lockScreen) lockScreen.style.display = 'flex';
 });
 
-// PIN salvo localmente (ou pegue do Firestore criptografado)
-const savedPin = localStorage.getItem('appPin') || '1234';
+// Função para desbloquear e mostrar o app
+function unlockApp() {
+  document.getElementById('lock-screen').style.display = 'none';
+  document.querySelector('.app-container').style.display = 'flex'; // Use 'flex' para manter o layout
+}
 
-// Desbloqueio por PIN
+// --- Funções do PIN ---
+
+// 1. Desbloqueia com o PIN salvo
 window.unlockWithPin = () => {
-  const entered = document.getElementById('lock-pin').value;
-  if (entered === savedPin) {
+  const savedPin = localStorage.getItem('appPin');
+  if (!savedPin) {
+    return alert('Nenhum PIN definido. Vá em Configurações para criar um.');
+  }
+  const enteredPin = document.getElementById('lock-pin').value;
+  if (enteredPin === savedPin) {
     unlockApp();
   } else {
     alert('PIN incorreto');
   }
 };
 
-// Desbloqueio por biometria
-window.unlockWithBiometrics = async () => {
-  if (!('credentials' in navigator)) {
-    alert('Biometria não suportada neste dispositivo');
-    return;
-  }
-  try {
-    // WebAuthn simplificado: requer HTTPS
-    await navigator.credentials.get({
-      publicKey: {
-        challenge: new Uint8Array(32),
-        userVerification: 'required',
-        timeout: 60000
-      }
-    });
-    unlockApp();
-  } catch (err) {
-    alert('Falha na biometria: ' + err);
+// 2. Permite ao usuário definir um novo PIN
+window.definirPin = () => {
+  const novoPin = prompt("Digite seu novo PIN de 4 a 6 dígitos:");
+  if (novoPin && novoPin.length >= 4 && novoPin.length <= 6 && !isNaN(novoPin)) {
+    localStorage.setItem('appPin', novoPin);
+    alert('Novo PIN salvo com sucesso!');
+  } else {
+    alert('PIN inválido. Use apenas números, com 4 a 6 dígitos.');
   }
 };
 
-function unlockApp() {
-  document.getElementById('lock-screen').style.display = 'none';
-  document.querySelector('.app-container').style.display = 'block';
-}
+// --- Funções da Biometria (WebAuthn) ---
+
+// 1. REGISTRA a biometria do usuário no dispositivo
+window.registrarBiometria = async () => {
+  if (!navigator.credentials || !navigator.credentials.create) {
+    return alert('Biometria (WebAuthn) não é suportada neste navegador.');
+  }
+  
+  try {
+    const publicKeyCredentialCreationOptions = {
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      rp: { name: "Controle Financeiro" },
+      user: {
+        id: crypto.getRandomValues(new Uint8Array(16)),
+        name: currentUser.email,
+        displayName: currentUser.email,
+      },
+      pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+      authenticatorSelection: { userVerification: "required" },
+      timeout: 60000,
+    };
+
+    const credential = await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
+    
+    // Convertemos o ID para uma string para poder salvar no localStorage
+    const credentialIdString = Array.from(new Uint8Array(credential.rawId)).toString();
+    localStorage.setItem('biometricCredentialId', credentialIdString);
+    
+    alert('Biometria cadastrada com sucesso!');
+  } catch (err) {
+    console.error('Erro ao registrar biometria:', err);
+    alert('Falha ao cadastrar biometria. Certifique-se de que está usando HTTPS e que a permissão não foi negada.');
+  }
+};
+
+// 2. VERIFICA a biometria para desbloquear
+window.unlockWithBiometrics = async () => {
+  const credentialIdString = localStorage.getItem('biometricCredentialId');
+  if (!credentialIdString) {
+    return alert('Nenhuma biometria cadastrada. Vá em Configurações para registrar.');
+  }
+
+  if (!navigator.credentials || !navigator.credentials.get) {
+    return alert('Biometria (WebAuthn) não é suportada neste navegador.');
+  }
+
+  try {
+    // Convertemos a string de volta para um ArrayBuffer
+    const credentialId = new Uint8Array(credentialIdString.split(',')).buffer;
+
+    const publicKeyCredentialRequestOptions = {
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      allowCredentials: [{
+        id: credentialId,
+        type: 'public-key',
+      }],
+      timeout: 60000,
+      userVerification: 'required',
+    };
+    
+    await navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions });
+    unlockApp(); // Sucesso!
+  } catch (err) {
+    console.error('Erro na autenticação biométrica:', err);
+    alert('Falha na autenticação biométrica.');
+  }
+};
 
 
 // ----------------------

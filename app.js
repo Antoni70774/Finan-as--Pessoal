@@ -325,23 +325,28 @@ const renderPayables = () => {
   });
 };
 const togglePayablePaid = async (id) => {
-  const payable = payablesData.find(p=>p.id===id);
-  if(!payable)return;
-  const newStatus=!payable.paid;
-  await updateDoc(doc(db,`users/${currentUser.uid}/payables`,id),{paid:newStatus});
+  const payable = payablesData.find(p => p.id === id);
+  if (!payable) return;
+  const newStatus = !payable.paid;
+  await updateDoc(doc(db, `users/${currentUser.uid}/payables`, id), { paid: newStatus });
 };
 
 // clique em botões A Pagar
-document.getElementById('payable-list').addEventListener('click', async e=>{
-  const btn=e.target.closest('button'); if(!btn)return;
-  const id=btn.dataset.id;
-  if(btn.classList.contains('btn-check')){
+document.getElementById('payable-list').addEventListener('click', async (e) => {
+  const btn = e.target.closest('button'); 
+  if (!btn) return;
+  const id = btn.dataset.id;
+
+  if (btn.classList.contains('btn-check')) {
+    // alterna pago ↔ não pago
     await togglePayablePaid(id);
-  }else if(btn.classList.contains('btn-edit-payable')){
-    // abre modal para edição
-  }else if(btn.classList.contains('btn-delete-payable')){
-    if(confirm('Excluir esta conta a pagar?')){
-      await deleteDoc(doc(db,`users/${currentUser.uid}/payables`,id));
+  } 
+  else if (btn.classList.contains('btn-edit-payable')) {
+    editPayable(id);
+  } 
+  else if (btn.classList.contains('btn-delete-payable')) {
+    if (confirm('Excluir esta conta a pagar?')) {
+      await deleteDoc(doc(db, `users/${currentUser.uid}/payables`, id));
     }
   }
 });

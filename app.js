@@ -113,29 +113,64 @@ window.unlockWithPin = () => {
   }
 };
 
-// 👆 Registrar biometria (simulada)
-window.registrarBiometria = () => {
+// 👆 Registrar biometria usando WebAuthn
+window.registrarBiometria = async () => {
   const user = auth.currentUser;
   if (!user) return alert('Você precisa estar logado para cadastrar biometria.');
 
-  const uid = user.uid;
-  localStorage.setItem(`biometry_${uid}`, 'true');
-  alert('Biometria registrada (simulação).');
+  try {
+    const publicKey = {
+      challenge: new Uint8Array(32), // no real precisa vir do servidor
+      rp: { name: "Controle Financeiro" },
+      user: {
+        id: new TextEncoder().encode(user.uid),
+        name: user.email,
+        displayName: user.email
+      },
+      pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+      authenticatorSelection: { userVerification: "required" },
+      timeout: 60000,
+    };
+
+    const credential = await navigator.credentials.create({ publicKey });
+
+    // Salva a credencial (rawId) localmente
+    localStorage.setItem(`biometry_${user.uid}`, JSON.stringify(credential.rawId));
+
+    alert('Biometria cadastrada com sucesso! Agora você pode desbloquear usando biometria.');
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao registrar biometria: ' + err);
+  }
 };
 
-// 🔓 Desbloquear com biometria (simulada)
-window.unlockWithBiometrics = () => {
+// 🔓 Desbloquear com biometria usando WebAuthn
+window.unlockWithBiometrics = async () => {
   const user = auth.currentUser;
   if (!user) return alert('Você precisa estar logado para desbloquear.');
 
-  const uid = user.uid;
-  const hasBiometry = localStorage.getItem(`biometry_${uid}`);
-  if (hasBiometry) {
-    unlockApp();
-  } else {
-    alert('Nenhuma biometria registrada.');
+  const rawId = localStorage.getItem(`biometry_${user.uid}`);
+  if (!rawId) return alert('Nenhuma biometria cadastrada.');
+
+  try {
+    const publicKey = {
+      challenge: new Uint8Array(32), // no real precisa vir do servidor
+      allowCredentials: [{
+        type: "public-key",
+        id: Uint8Array.from(Object.values(JSON.parse(rawId)))
+      }],
+      userVerification: "required",
+      timeout: 60000
+    };
+
+    await navigator.credentials.get({ publicKey });
+    unlockApp(); // Se passou, desbloqueia
+  } catch (err) {
+    console.error(err);
+    alert('Erro na autenticação biométrica: ' + err);
   }
 };
+
 
 // ⚙️ Ir para configurações
 window.irParaConfiguracoes = () => {

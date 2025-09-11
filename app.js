@@ -139,7 +139,7 @@ window.unlockWithBiometrics = () => {
 window.irParaConfiguracoes = () => {
   const user = auth.currentUser;
   if (user) {
-    showPage('config-page');
+    window.showPage('config-page');
   } else {
     alert('Você precisa estar autenticado para configurar segurança.');
     window.location.href = 'login.html';
@@ -151,12 +151,12 @@ window.irParaConfiguracoes = () => {
 // 🌍 Funções de Utilidade
 // ----------------------
 
-const showPage = (pageId) => {
-    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-    document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
-    closeSidebar();
+window.showPage = (pageId) => {
+  document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+  document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
+  closeSidebar();
 };
 
 const formatCurrency = (value) => formatter.format(value);

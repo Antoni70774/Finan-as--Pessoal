@@ -64,14 +64,14 @@ body {
 .app-container {
     width: 100%;
     max-width: 450px;
-    height: 100%;
+    height: auto; 
     max-height: 800px;
     background-color: var(--card-bg);
     border-radius: 20px;
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto;
     position: relative;
 }
 
@@ -193,7 +193,8 @@ body {
 .page {
   display: none;
   animation: fadeIn 0.5s ease-in-out;
-  min-height: 0;        /* ← importante para o flex container */
+  min-height: 100vh;
+  overflow-y: auto;
   position: relative;
 }
 

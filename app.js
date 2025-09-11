@@ -41,42 +41,63 @@ const formatter = new Intl.NumberFormat('pt-BR', {
 // ==============================================
 // 🔐 BLOQUEIO E DESBLOQUEIO LOCAL (CÓDIGO CORRIGIDO)
 // ==============================================
-
-// Mostra a tela de bloqueio assim que a página carregar
 document.addEventListener('DOMContentLoaded', () => {
-  const appContainer = document.querySelector('.app-container');
-  const lockScreen = document.getElementById('lock-screen');
+  onAuthStateChanged(auth, user => {
+    const appContainer = document.querySelector('.app-container');
+    const lockScreen = document.getElementById('lock-screen');
 
-  const hasPin = localStorage.getItem('appPin');
-  const hasBiometry = localStorage.getItem('biometricCredentialId');
+    if (user) {
+      const uid = user.uid;
+      const hasPin = localStorage.getItem(`pin_${uid}`);
+      const hasBiometry = localStorage.getItem(`biometry_${uid}`);
 
-  const shouldLock = hasPin || hasBiometry;
-
-  if (shouldLock) {
-    appContainer.style.display = 'none';
-    lockScreen.style.display = 'flex';
-  } else {
-    appContainer.style.display = 'flex';
-    lockScreen.style.display = 'none';
-  }
+      if (hasPin || hasBiometry) {
+        appContainer.style.display = 'none';
+        lockScreen.style.display = 'flex';
+      } else {
+        alert('Você ainda não definiu um PIN ou biometria. Vá para Configurações.');
+        showPage('config-page');
+      }
+    } else {
+      window.location.href = 'login.html';
+    }
+  });
 });
 
-
-// Função para desbloquear e mostrar o app
 function unlockApp() {
   document.getElementById('lock-screen').style.display = 'none';
-  document.querySelector('.app-container').style.display = 'flex'; // Use 'flex' para manter o layout
+  document.querySelector('.app-container').style.display = 'flex';
 }
 
-// --- Funções do PIN ---
+// 🔑 Definir novo PIN
+window.definirPin = () => {
+  const user = auth.currentUser;
+  if (!user) return alert('Você precisa estar logado para definir um PIN.');
 
-// 1. Desbloqueia com o PIN salvo
+  const uid = user.uid;
+  const novoPin = prompt("Digite seu novo PIN de 4 a 6 dígitos:");
+  if (novoPin && novoPin.length >= 4 && novoPin.length <= 6 && !isNaN(novoPin)) {
+    localStorage.setItem(`pin_${uid}`, novoPin);
+    alert('Novo PIN salvo com sucesso!');
+    showPage('lock-screen');
+  } else {
+    alert('PIN inválido. Use apenas números, com 4 a 6 dígitos.');
+  }
+};
+
+// 🔓 Desbloquear com PIN
 window.unlockWithPin = () => {
-  const savedPin = localStorage.getItem('appPin');
+  const user = auth.currentUser;
+  if (!user) return alert('Você precisa estar logado para desbloquear.');
+
+  const uid = user.uid;
+  const savedPin = localStorage.getItem(`pin_${uid}`);
+  const enteredPin = document.getElementById('lock-pin').value;
+
   if (!savedPin) {
     return alert('Nenhum PIN definido. Vá em Configurações para criar um.');
   }
-  const enteredPin = document.getElementById('lock-pin').value;
+
   if (enteredPin === savedPin) {
     unlockApp();
   } else {
@@ -84,14 +105,38 @@ window.unlockWithPin = () => {
   }
 };
 
-// 2. Permite ao usuário definir um novo PIN
-window.definirPin = () => {
-  const novoPin = prompt("Digite seu novo PIN de 4 a 6 dígitos:");
-  if (novoPin && novoPin.length >= 4 && novoPin.length <= 6 && !isNaN(novoPin)) {
-    localStorage.setItem('appPin', novoPin);
-    alert('Novo PIN salvo com sucesso!');
+// 👆 Registrar biometria (simulada)
+window.registrarBiometria = () => {
+  const user = auth.currentUser;
+  if (!user) return alert('Você precisa estar logado para cadastrar biometria.');
+
+  const uid = user.uid;
+  localStorage.setItem(`biometry_${uid}`, 'true');
+  alert('Biometria registrada (simulação).');
+};
+
+// 🔓 Desbloquear com biometria (simulada)
+window.unlockWithBiometrics = () => {
+  const user = auth.currentUser;
+  if (!user) return alert('Você precisa estar logado para desbloquear.');
+
+  const uid = user.uid;
+  const hasBiometry = localStorage.getItem(`biometry_${uid}`);
+  if (hasBiometry) {
+    unlockApp();
   } else {
-    alert('PIN inválido. Use apenas números, com 4 a 6 dígitos.');
+    alert('Nenhuma biometria registrada.');
+  }
+};
+
+// ⚙️ Ir para configurações
+window.irParaConfiguracoes = () => {
+  const user = auth.currentUser;
+  if (user) {
+    showPage('config-page');
+  } else {
+    alert('Você precisa estar autenticado para configurar segurança.');
+    window.location.href = 'login.html';
   }
 };
 

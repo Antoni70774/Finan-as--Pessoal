@@ -668,6 +668,21 @@ const renderMonthlyChart = () => {
   });
 };
 
+document.getElementById('resumo-prev-month').addEventListener('click', () => {
+  currentMonth.setMonth(currentMonth.getMonth() - 1);
+  updateMonthlySummary(currentMonth);
+  renderMonthlyRankingChart();
+  renderMonthlyCategoryChart();
+  renderMonthlyChart();
+});
+
+document.getElementById('resumo-next-month').addEventListener('click', () => {
+  currentMonth.setMonth(currentMonth.getMonth() + 1);
+  updateMonthlySummary(currentMonth);
+  renderMonthlyRankingChart();
+  renderMonthlyCategoryChart();
+  renderMonthlyChart();
+});
 
 const renderMonthlyRankingChart = () => {
   const ctx=document.getElementById('monthly-ranking-chart').getContext('2d');
@@ -705,6 +720,13 @@ const renderMonthlyCategoryChart = () => {
     options:{responsive:true,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ti=>`${ti.label}: ${formatCurrency(ti.raw)}`}}}}
   });
 };
+
+if (!transactionsData || transactionsData.length === 0) {
+  document.getElementById('monthly-revenue').textContent = 'R$ 0,00';
+  document.getElementById('monthly-expense').textContent = 'R$ 0,00';
+  document.getElementById('monthly-balance').textContent = 'R$ 0,00';
+  return;
+}
 
 
 const renderAnnualChart = () => {
@@ -997,9 +1019,12 @@ document.getElementById('payable-list').addEventListener('click', async (e) => {
 // Funções do menu lateral
 window.abrirResumoMensal = () => {
   showPage('resumo-mensal-page');
-  updateMonthlySummary(currentMonth);
-  renderMonthlyRankingChart();
-  renderMonthlyCategoryChart();
+  setTimeout(() => {
+    updateMonthlySummary(currentMonth);
+    renderMonthlyRankingChart();
+    renderMonthlyCategoryChart();
+    renderMonthlyChart();
+  }, 100);
 };
 
 window.abrirResumoAnual = () => {

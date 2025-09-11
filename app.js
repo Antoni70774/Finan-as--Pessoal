@@ -370,6 +370,9 @@ const listenForData = () => {
     onSnapshot(transactionsRef, (snapshot) => {
         transactionsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         refreshDashboard();
+        updateMonthlySummary(currentMonth);
+        renderMonthlyRankingChart();
+        renderMonthlyCategoryChart();
     });
     const goalsRef = collection(db, `users/${user.uid}/goals`);
     onSnapshot(goalsRef, (snapshot) => {
@@ -674,16 +677,6 @@ const renderMonthlyCategoryChart = () => {
   });
 };
 
-onSnapshot(collection(db,`users/${currentUser.uid}/transactions`),(snap)=>{
-  transactionsData=snap.docs.map(d=>({id:d.id,...d.data()}));
-  // Atualiza gráficos automaticamente se estiver no resumo mensal
-  if(document.getElementById('resumo-mensal-page').classList.contains('active')){
-    renderMonthlyChart();
-    renderMonthlyRankingChart();
-    renderMonthlyCategoryChart();
-  }
-});
-
 
 const renderAnnualChart = () => {
     const ctx = document.getElementById('annual-chart').getContext('2d');
@@ -956,23 +949,28 @@ document.getElementById('payable-form').addEventListener('submit', async (e) => 
 
 document.getElementById('cancel-payable-btn').addEventListener('click', closePayableModal);
 document.getElementById('payable-list').addEventListener('click', async (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    const id = btn.dataset.id;
-    if (btn.classList.contains('btn-check')) {
-        await markPayableAsPaid(id);
-    } else if (btn.classList.contains('btn-edit-payable')) {
-        editPayable(id);
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const id = btn.dataset.id;
+
+  if (btn.classList.contains('btn-check')) {
+    await togglePayablePaid(id); // aqui
+  } else if (btn.classList.contains('btn-edit-payable')) {
+    editPayable(id);
+  } else if (btn.classList.contains('btn-delete-payable')) {
+    if (confirm('Excluir esta conta a pagar?')) {
+      await deleteDoc(doc(db, `users/${currentUser.uid}/payables`, id));
     }
+  }
 });
+
 
 // Funções do menu lateral
 window.abrirResumoMensal = () => {
-    showPage('resumo-mensal-page');
-    updateMonthlySummary(currentMonth);
-    renderMonthlyChart();
-    renderMonthlyRankingChart();
-    renderMonthlyCategoryChart();
+  showPage('resumo-mensal-page');
+  updateMonthlySummary(currentMonth);
+  renderMonthlyRankingChart();
+  renderMonthlyCategoryChart();
 };
 
 window.abrirResumoAnual = () => {

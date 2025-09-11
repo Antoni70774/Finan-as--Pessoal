@@ -47,17 +47,18 @@ body:not(.dark-theme) {
 }
 
 body {
-    font-family: var(--font-family, 'Segoe UI', sans-serif);
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    line-height: 1.6;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: 100vh;
-    overflow: hidden;
-    position: relative;
+  font-family: var(--font-family, 'Segoe UI', sans-serif);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  /* overflow: hidden;  ← remova esta linha */
+  position: relative;
 }
+
 
 /* Container principal */
 .app-container {
@@ -187,8 +188,10 @@ body {
 }
 
 .page {
-    display: none;
-    animation: fadeIn 0.5s ease-in-out;
+  display: none;
+  animation: fadeIn 0.5s ease-in-out;
+  min-height: 0;        /* ← importante para o flex container */
+  position: relative;
 }
 
 .page.active {

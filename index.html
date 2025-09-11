@@ -354,17 +354,20 @@
         <div id="config-page" class="page">
           <h2>⚙️ Configurações</h2>
         
+          <!-- 🔑 Primeiro bloco: PIN -->
           <div class="config-section">
             <h3>🔑 Definir PIN de Acesso</h3>
             <input type="password" id="new-pin" placeholder="Digite o novo PIN" maxlength="6">
             <button onclick="salvarNovoPin()">Salvar PIN</button>
           </div>
         
+          <!-- 👆 Segundo bloco: biometria -->
           <div class="config-section">
             <h3>👆 Cadastrar Biometria</h3>
             <button onclick="registrarBiometria()">Registrar Biometria</button>
           </div>
         
+          <!-- Depois, os outros botões -->
           <ul class="config-options">
             <li><button onclick="exportarDados()">📤 Exportar Dados</button></li>
             <li><button onclick="trocarTema()">🎨 Alterar Tema</button></li>

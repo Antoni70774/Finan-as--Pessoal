@@ -1010,6 +1010,26 @@ document.addEventListener('click', (e) => {
     }
 });
 
+const listenForData=()=>{
+  if(!currentUser)return;
+  onSnapshot(collection(db,`users/${currentUser.uid}/transactions`),(snap)=>{
+    transactionsData=snap.docs.map(d=>({id:d.id,...d.data()}));
+    updateChart();
+  });
+  onSnapshot(collection(db,`users/${currentUser.uid}/goals`),(snap)=>{
+    goalsData=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderGoals();
+  });
+  onSnapshot(collection(db,`users/${currentUser.uid}/payables`),(snap)=>{
+  payablesData=snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderPayables();
+});
+};
+
+// fechar menu lateral
+const closeSidebar=()=>{document.getElementById('menu-perfil').style.display='none';};
+
+
 // ----------------------
 // 🚀 Inicialização
 // ----------------------
@@ -1032,22 +1052,3 @@ auth.onAuthStateChanged(user => {
         window.location.href = "login.html";
     }
 });
-
-const listenForData=()=>{
-  if(!currentUser)return;
-  onSnapshot(collection(db,`users/${currentUser.uid}/transactions`),(snap)=>{
-    transactionsData=snap.docs.map(d=>({id:d.id,...d.data()}));
-    updateChart();
-  });
-  onSnapshot(collection(db,`users/${currentUser.uid}/goals`),(snap)=>{
-    goalsData=snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderGoals();
-  });
-  onSnapshot(collection(db,`users/${currentUser.uid}/payables`),(snap)=>{
-    payablesData=snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderPayables();
-  });
-};
-
-// fechar menu lateral
-const closeSidebar=()=>{document.getElementById('menu-perfil').style.display='none';};

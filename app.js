@@ -611,20 +611,41 @@ const editPayable = (id) => {
 };
 
 const updateMonthlySummary = (date) => {
-    const monthYear = getMonthYearString(date);
-    document.getElementById('mes-atual').textContent = monthYear;
-    document.getElementById('resumo-current-month-year').textContent = monthYear;
-    const filtered = transactionsData.filter(t => {
-        const transactionDate = new Date(t.date + 'T12:00:00-03:00');
-        return transactionDate.getFullYear() === date.getFullYear() && transactionDate.getMonth() === date.getMonth();
-    });
-    const income = filtered.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
-    const expense = filtered.filter(t => t.type === 'expense').reduce((sum, t) => sum + parseFloat(t.amount), 0);
-    const balance = income - expense;
-    document.getElementById('monthly-revenue').textContent = formatCurrency(income);
-    document.getElementById('monthly-expense').textContent = formatCurrency(expense);
-    document.getElementById('monthly-balance').textContent = formatCurrency(balance);
+  // 1) calcula label mês/ano
+  const monthYear = getMonthYearString(date);
+
+  // 2) atualiza o único span correto
+  const resumoEl = document.getElementById('resumo-current-month-year');
+  if (resumoEl) resumoEl.textContent = monthYear;
+
+  // 3) se não houver dados, zera e retorna
+  if (!Array.isArray(transactionsData) || transactionsData.length === 0) {
+    document.getElementById('monthly-revenue').textContent = 'R$ 0,00';
+    document.getElementById('monthly-expense').textContent = 'R$ 0,00';
+    document.getElementById('monthly-balance').textContent = 'R$ 0,00';
+    return;
+  }
+
+  // 4) filtra pelas transações do mês selecionado
+  const filtered = transactionsData.filter(t => {
+    const dt = new Date(t.date + 'T12:00:00-03:00');
+    return dt.getFullYear() === date.getFullYear() && dt.getMonth() === date.getMonth();
+  });
+
+  // 5) soma receitas e despesas
+  const income = filtered
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+  const expense = filtered
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+  // 6) atualiza os cards
+  document.getElementById('monthly-revenue').textContent = formatCurrency(income);
+  document.getElementById('monthly-expense').textContent = formatCurrency(expense);
+  document.getElementById('monthly-balance').textContent = formatCurrency(income - expense);
 };
+
 
 
 // ==============================

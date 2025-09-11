@@ -171,7 +171,8 @@ body {
 }
 
 .page {
-  padding-bottom: 80px; /* espaço para a barra fixa */
+  padding-top: 0; /* zera o espaço extra */
+  margin-top: 0;
 }
 
 /*
@@ -725,6 +726,7 @@ section {
 
 /* Ajuste do container do gráfico dentro da página de resumo */
 #resumo-mensal-page .chart-container {
+  padding-top: 0;
   margin-top: 0;
 }
 

@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         appContainer.style.display = 'none';
         lockScreen.style.display = 'flex';
       } else {
-        alert('Você ainda não definiu um PIN ou biometria. Vá para Configurações.');
+        // sem PIN ou biometria
         showPage('config-page');
       }
     } else {
@@ -70,26 +70,28 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+
 function unlockApp() {
   document.getElementById('lock-screen').style.display = 'none';
   document.querySelector('.app-container').style.display = 'flex';
 }
 
-// 🔑 Definir novo PIN
-window.definirPin = () => {
+// 🔑 Salvar novo PIN (com input)
+window.salvarNovoPin = () => {
   const user = auth.currentUser;
   if (!user) return alert('Você precisa estar logado para definir um PIN.');
 
   const uid = user.uid;
-  const novoPin = prompt("Digite seu novo PIN de 4 a 6 dígitos:");
+  const novoPin = document.getElementById('new-pin').value;
   if (novoPin && novoPin.length >= 4 && novoPin.length <= 6 && !isNaN(novoPin)) {
     localStorage.setItem(`pin_${uid}`, novoPin);
     alert('Novo PIN salvo com sucesso!');
-    showPage('lock-screen');
+    document.getElementById('new-pin').value = '';
   } else {
     alert('PIN inválido. Use apenas números, com 4 a 6 dígitos.');
   }
 };
+
 
 // 🔓 Desbloquear com PIN
 window.unlockWithPin = () => {

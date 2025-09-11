@@ -353,15 +353,25 @@
         <!-- Página: Configurações -->
         <div id="config-page" class="page">
           <h2>⚙️ Configurações</h2>
+        
+          <div class="config-section">
+            <h3>🔑 Definir PIN de Acesso</h3>
+            <input type="password" id="new-pin" placeholder="Digite o novo PIN" maxlength="6">
+            <button onclick="salvarNovoPin()">Salvar PIN</button>
+          </div>
+        
+          <div class="config-section">
+            <h3>👆 Cadastrar Biometria</h3>
+            <button onclick="registrarBiometria()">Registrar Biometria</button>
+          </div>
+        
           <ul class="config-options">
-            <li><button onclick="definirPin()">🔑 Definir PIN de Acesso</button></li>
-            <li><button onclick="registrarBiometria()">👆 Cadastrar Biometria</button></li>
             <li><button onclick="exportarDados()">📤 Exportar Dados</button></li>
             <li><button onclick="trocarTema()">🎨 Alterar Tema</button></li>
             <li><button onclick="resetarApp()">♻️ Resetar Aplicativo</button></li>
           </ul>
         </div>
-        
+
         <!-- Ajuda -->
         <div id="ajuda-page" class="page">
           <h2>❓ Ajuda</h2>

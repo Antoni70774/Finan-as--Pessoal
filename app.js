@@ -45,11 +45,22 @@ const formatter = new Intl.NumberFormat('pt-BR', {
 // Mostra a tela de bloqueio assim que a página carregar
 document.addEventListener('DOMContentLoaded', () => {
   const appContainer = document.querySelector('.app-container');
-  if (appContainer) appContainer.style.display = 'none';
-  
   const lockScreen = document.getElementById('lock-screen');
-  if (lockScreen) lockScreen.style.display = 'flex';
+
+  const hasPin = localStorage.getItem('appPin');
+  const hasBiometry = localStorage.getItem('biometricCredentialId');
+
+  const shouldLock = hasPin || hasBiometry;
+
+  if (shouldLock) {
+    appContainer.style.display = 'none';
+    lockScreen.style.display = 'flex';
+  } else {
+    appContainer.style.display = 'flex';
+    lockScreen.style.display = 'none';
+  }
 });
+
 
 // Função para desbloquear e mostrar o app
 function unlockApp() {

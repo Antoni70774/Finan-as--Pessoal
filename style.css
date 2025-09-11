@@ -1063,6 +1063,12 @@ canvas {
     margin-top: 0;
 }
 
+/*
+ * ========================================
+ * Tela de Login de Aplicativo/Digital
+ * ========================================
+ */
+
 .lock-screen {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;

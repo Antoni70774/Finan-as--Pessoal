@@ -324,20 +324,28 @@ const renderPayables = () => {
     list.appendChild(div);
   });
 };
-// listener para clique nos botões
+const togglePayablePaid = async (id) => {
+  const payable = payablesData.find(p=>p.id===id);
+  if(!payable)return;
+  const newStatus=!payable.paid;
+  await updateDoc(doc(db,`users/${currentUser.uid}/payables`,id),{paid:newStatus});
+};
+
+// clique em botões A Pagar
 document.getElementById('payable-list').addEventListener('click', async e=>{
   const btn=e.target.closest('button'); if(!btn)return;
   const id=btn.dataset.id;
   if(btn.classList.contains('btn-check')){
-    await markPayableAsPaid(id);
+    await togglePayablePaid(id);
   }else if(btn.classList.contains('btn-edit-payable')){
-    editPayable(id);
+    // abre modal para edição
   }else if(btn.classList.contains('btn-delete-payable')){
     if(confirm('Excluir esta conta a pagar?')){
       await deleteDoc(doc(db,`users/${currentUser.uid}/payables`,id));
     }
   }
 });
+
 
 const updateAlertBadge = () => {
     const today = new Date();
@@ -607,37 +615,44 @@ const updateMonthlySummary = (date) => {
     document.getElementById('monthly-balance').textContent = formatCurrency(balance);
 };
 
+
+// ==============================
+// 🔹 Resumo Mensal – gráficos
+// ==============================
 const renderMonthlyChart = () => {
-    const ctx = document.getElementById('monthly-bar-chart').getContext('2d');
-    const monthlyData = calculateMonthlyTotals();
-    if (window.monthlyChart) {
-        window.monthlyChart.destroy();
-    }
-    window.monthlyChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: monthlyData.months,
-            datasets: [{
-                label: 'Receitas',
-                data: monthlyData.incomes,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-            }, {
-                label: 'Despesas',
-                data: monthlyData.expenses,
-                backgroundColor: 'rgba(255, 99, 132, 0.6)',
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: { stacked: true },
-                y: { stacked: true }
-            }
-        }
-    });
+  const ctx=document.getElementById('monthly-bar-chart').getContext('2d');
+  const filtered=transactionsData.filter(t=>{
+    const d=new Date(t.date+'T12:00:00-03:00');
+    return d.getFullYear()===currentMonth.getFullYear() && d.getMonth()===currentMonth.getMonth();
+  });
+  const income=filtered.filter(t=>t.type==='income').reduce((s,t)=>s+parseFloat(t.amount),0);
+  const expense=filtered.filter(t=>t.type==='expense').reduce((s,t)=>s+parseFloat(t.amount),0);
+  document.getElementById('monthly-revenue').textContent=formatCurrency(income);
+  document.getElementById('monthly-expense').textContent=formatCurrency(expense);
+  document.getElementById('monthly-balance').textContent=formatCurrency(income-expense);
 };
 
+const renderMonthlyRankingChart = () => {
+  const ctx=document.getElementById('monthly-ranking-chart').getContext('2d');
+  const filtered = transactionsData.filter(t=>{
+    const d=new Date(t.date+'T12:00:00-03:00');
+    return t.type==='expense' && d.getMonth()===currentMonth.getMonth() && d.getFullYear()===currentMonth.getFullYear();
+  });
+  const cats={}; filtered.forEach(t=>cats[t.category]=(cats[t.category]||0)+parseFloat(t.amount));
+  const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const labels=sorted.map(s=>s[0]); const values=sorted.map(s=>s[1]);
+  if(window.monthlyRankingChart)window.monthlyRankingChart.destroy();
+  window.monthlyRankingChart=new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[{data:values,backgroundColor:'#4A90E2'}]},
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ti=>formatCurrency(ti.raw)}}},
+      scales:{x:{beginAtZero:true}}
+    }
+  });
+};
 
 const renderMonthlyCategoryChart = () => {
   const ctx=document.getElementById('monthly-category-chart').getContext('2d');
@@ -941,6 +956,7 @@ window.abrirResumoMensal = () => {
     showPage('resumo-mensal-page');
     updateMonthlySummary(currentMonth);
     renderMonthlyChart();
+    renderMonthlyRankingChart();
     renderMonthlyCategoryChart();
 };
 
@@ -1016,3 +1032,22 @@ auth.onAuthStateChanged(user => {
         window.location.href = "login.html";
     }
 });
+
+const listenForData=()=>{
+  if(!currentUser)return;
+  onSnapshot(collection(db,`users/${currentUser.uid}/transactions`),(snap)=>{
+    transactionsData=snap.docs.map(d=>({id:d.id,...d.data()}));
+    updateChart();
+  });
+  onSnapshot(collection(db,`users/${currentUser.uid}/goals`),(snap)=>{
+    goalsData=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderGoals();
+  });
+  onSnapshot(collection(db,`users/${currentUser.uid}/payables`),(snap)=>{
+    payablesData=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderPayables();
+  });
+};
+
+// fechar menu lateral
+const closeSidebar=()=>{document.getElementById('menu-perfil').style.display='none';};

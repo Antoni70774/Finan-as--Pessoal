@@ -1,19 +1,21 @@
+// ==============================================
+// 🔗 Firebase Setup
+// ==============================================
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
-    getFirestore, enableIndexedDbPersistence, collection, doc,
-    setDoc, getDocs, onSnapshot, writeBatch, deleteDoc, updateDoc, query, where, orderBy
+  getFirestore, enableIndexedDbPersistence, collection, doc,
+  setDoc, getDocs, onSnapshot, writeBatch, deleteDoc, updateDoc, query, where, orderBy
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-// 🔗 Configuração do Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyBQeYc0Y-eYONv3ZfvZoJEzOjoKR371P-Y",
-    authDomain: "controle-financeiro-65744.firebaseapp.com",
-    projectId: "controle-financeiro-65744",
-    storageBucket: "controle-financeiro-65744.appspot.com",
-    messagingSenderId: "587527394934",
-    appId: "1:587527394934:web:c142740ef0139a5cf63157",
-    measurementId: "G-RT2T1HNV4G"
+  apiKey: "AIzaSyBQeYc0Y-eYONv3ZfvZoJEzOjoKR371P-Y",
+  authDomain: "controle-financeiro-65744.firebaseapp.com",
+  projectId: "controle-financeiro-65744",
+  storageBucket: "controle-financeiro-65744.appspot.com",
+  messagingSenderId: "587527394934",
+  appId: "1:587527394934:web:c142740ef0139a5cf63157",
+  measurementId: "G-RT2T1HNV4G"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -22,8 +24,11 @@ const db = getFirestore(app);
 
 // Ativa cache offline
 (async () => {
-    try { await enableIndexedDbPersistence(db); }
-    catch (e) { console.warn("IndexedDB não disponível:", e); }
+  try {
+    await enableIndexedDbPersistence(db);
+  } catch (e) {
+    console.warn("IndexedDB não disponível:", e);
+  }
 })();
 
 let currentUser = null;
@@ -34,13 +39,14 @@ let payablesData = [];
 let myChart;
 
 const formatter = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
+  style: 'currency',
+  currency: 'BRL',
 });
 
 // ==============================================
-// 🔐 BLOQUEIO E DESBLOQUEIO LOCAL (CÓDIGO CORRIGIDO)
+// 🔐 BLOQUEIO E DESBLOQUEIO LOCAL (REVISADO)
 // ==============================================
+
 document.addEventListener('DOMContentLoaded', () => {
   onAuthStateChanged(auth, user => {
     const appContainer = document.querySelector('.app-container');

@@ -81,12 +81,12 @@
     });
   </script>
 
-  <div id="lock-screen" class="lock-screen">
+  <!-- Tela de bloqueio -->
+  <div id="lock-screen" class="lock-screen" style="display:none;">
     <h2>🔒 Acesso Protegido</h2>
     <input type="password" id="lock-pin" placeholder="Digite seu PIN" maxlength="6">
     <button onclick="unlockWithPin()">Desbloquear</button>
     <button onclick="unlockWithBiometrics()">Usar biometria</button>
-    <button onclick="irParaConfiguracoes()">⚙️ Configurar PIN/Biometria</button>
   </div>
 
   <div class="app-container">

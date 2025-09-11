@@ -159,6 +159,7 @@ window.showPage = (pageId) => {
   closeSidebar();
 };
 
+
 const formatCurrency = (value) => formatter.format(value);
 const formatDate = (date) => new Date(date + 'T00:00:00').toLocaleDateString('pt-BR');
 

@@ -397,7 +397,7 @@
       if (user) {
         const uid = user.uid;
         const hasPin = localStorage.getItem(`pin_${uid}`);
-        const hasBiometry = localStorage.getItem(`biometry_${uid`);
+        const hasBiometry = localStorage.getItem(`biometry_${uid}`);
   
         if (hasPin || hasBiometry) {
           showPage('lock-screen');

@@ -289,7 +289,14 @@
         </div>
         <!-- Página: Resumo Mensal -->
         <div id="resumo-mensal-page" class="page">
+          
           <h2>📅 Resumo Mensal</h2>
+        
+          <div class="month-nav">
+            <button id="resumo-prev-month" class="btn-secondary">&lt;</button>
+            <span id="resumo-current-month-year"></span>
+            <button id="resumo-next-month" class="btn-secondary">&gt;</button>
+          </div>
         
           <div id="resumo-mensal-summary" class="summary-boxes">
             <div class="summary-item">
@@ -305,7 +312,7 @@
               <p id="monthly-balance">R$ 0,00</p>
             </div>
           </div>
-        
+           
           <h3>Ranking de Categorias</h3>
           <canvas id="monthly-ranking-chart"></canvas>
           
@@ -314,12 +321,6 @@
           
           <h3>Gráfico de Barras (Receita vs Despesa)</h3>
           <canvas id="monthly-bar-chart"></canvas>
-
-          <div class="month-nav">
-            <button id="resumo-prev-month" class="btn-secondary">&lt;</button>
-            <span id="resumo-current-month-year"></span>
-            <button id="resumo-next-month" class="btn-secondary">&gt;</button>
-          </div>
         </div>
 
         <!-- Página: Resumo Anual -->

@@ -1062,3 +1062,27 @@ canvas {
 #resumo-anual-page h2 {
     margin-top: 0;
 }
+
+.lock-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #222;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.lock-screen input {
+  font-size: 1.2em;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.lock-screen button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 1em;
+}

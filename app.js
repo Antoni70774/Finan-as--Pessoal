@@ -667,6 +667,7 @@ const renderMonthlyChart = () => {
   });
 };
 
+
 const renderMonthlyRankingChart = () => {
   const ctx=document.getElementById('monthly-ranking-chart').getContext('2d');
   const filtered = transactionsData.filter(t=>{

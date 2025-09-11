@@ -1050,3 +1050,15 @@ canvas {
         right: 15px;
     }
 }
+
+/*
+ * ========================================
+ * Correções Finais de Espaçamento
+ * ========================================
+ */
+
+/* Remove a margem superior padrão do título nas páginas de resumo */
+#resumo-mensal-page h2,
+#resumo-anual-page h2 {
+    margin-top: 0;
+}

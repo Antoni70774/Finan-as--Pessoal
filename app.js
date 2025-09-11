@@ -674,6 +674,16 @@ const renderMonthlyCategoryChart = () => {
   });
 };
 
+onSnapshot(collection(db,`users/${currentUser.uid}/transactions`),(snap)=>{
+  transactionsData=snap.docs.map(d=>({id:d.id,...d.data()}));
+  // Atualiza gráficos automaticamente se estiver no resumo mensal
+  if(document.getElementById('resumo-mensal-page').classList.contains('active')){
+    renderMonthlyChart();
+    renderMonthlyRankingChart();
+    renderMonthlyCategoryChart();
+  }
+});
+
 
 const renderAnnualChart = () => {
     const ctx = document.getElementById('annual-chart').getContext('2d');

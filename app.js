@@ -721,13 +721,6 @@ const renderMonthlyCategoryChart = () => {
   });
 };
 
-if (!transactionsData || transactionsData.length === 0) {
-  document.getElementById('monthly-revenue').textContent = 'R$ 0,00';
-  document.getElementById('monthly-expense').textContent = 'R$ 0,00';
-  document.getElementById('monthly-balance').textContent = 'R$ 0,00';
-  return;
-}
-
 
 const renderAnnualChart = () => {
     const ctx = document.getElementById('annual-chart').getContext('2d');

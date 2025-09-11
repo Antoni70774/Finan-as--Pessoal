@@ -376,6 +376,7 @@ const listenForData = () => {
         renderMonthlyCategoryChart();
     });
 
+
     const goalsRef = collection(db, `users/${user.uid}/goals`);
     onSnapshot(goalsRef, (snapshot) => {
         goalsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

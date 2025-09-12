@@ -10,6 +10,34 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <style>
+  /* Evita espaço no topo do conteúdo principal */
+  #app-main {
+    padding: 12px 20px 90px 20px !important;
+  }
+
+  /* Remove margem superior dos títulos */
+  #resumo-mensal-page h2,
+  #resumo-anual-page h2,
+  #config-page h2 {
+    margin-top: 0 !important;
+  }
+
+  /* Garante que o primeiro filho não crie espaço extra */
+  #resumo-mensal-page > *:first-child,
+  #resumo-anual-page > *:first-child,
+  #config-page > *:first-child {
+    margin-top: 0 !important;
+  }
+
+  /* Remove padding interno desnecessário */
+  #resumo-mensal-page,
+  #resumo-anual-page,
+  #config-page {
+    padding-top: 0 !important;
+  }
+</style>
 </head>
 
 <body class="dark-theme">
@@ -325,15 +353,15 @@
 
         <!-- Página: Resumo Anual -->
         <div id="resumo-anual-page" class="page">
-          <h2>📈 Resumo Anual</h2>
-          <div class="summary-boxes">
-            <div class="box"><h4>Receita Total</h4><p id="annual-revenue">R$ 0,00</p></div>
-            <div class="box"><h4>Despesa Total</h4><p id="annual-expense">R$ 0,00</p></div>
-            <div class="box"><h4>Saldo Acumulado</h4><p id="annual-balance">R$ 0,00</p></div>
-          </div>
-          <canvas id="annual-chart" width="100%" height="70"></canvas>
-        </div>
-      
+          <h2>📈 Resumo Anual</h2>
+          <div class="summary-boxes">
+            <div class="box"><h4>Receita Total</h4><p id="annual-revenue">R$ 0,00</p></div>
+            <div class="box"><h4>Despesa Total</h4><p id="annual-expense">R$ 0,00</p></div>
+            <div class="box"><h4>Saldo Acumulado</h4><p id="annual-balance">R$ 0,00</p></div>
+          </div>
+          <canvas id="annual-chart" width="100%" height="70"></canvas>
+        </div>
+    
         <!-- Perfil -->
         <div id="perfil-page" class="page">
           <h2>👤 Perfil do Usuário</h2>

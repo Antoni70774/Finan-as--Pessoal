@@ -1,21 +1,19 @@
-// ==============================================
-// 🔗 Firebase Setup
-// ==============================================
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
-  getFirestore, enableIndexedDbPersistence, collection, doc,
-  setDoc, getDocs, onSnapshot, writeBatch, deleteDoc, updateDoc, query, where, orderBy
+    getFirestore, enableIndexedDbPersistence, collection, doc,
+    setDoc, getDocs, onSnapshot, writeBatch, deleteDoc, updateDoc, query, where, orderBy
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
+// 🔗 Configuração do Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyBQeYc0Y-eYONv3ZfvZoJEzOjoKR371P-Y",
-  authDomain: "controle-financeiro-65744.firebaseapp.com",
-  projectId: "controle-financeiro-65744",
-  storageBucket: "controle-financeiro-65744.appspot.com",
-  messagingSenderId: "587527394934",
-  appId: "1:587527394934:web:c142740ef0139a5cf63157",
-  measurementId: "G-RT2T1HNV4G"
+    apiKey: "AIzaSyBQeYc0Y-eYONv3ZfvZoJEzOjoKR371P-Y",
+    authDomain: "controle-financeiro-65744.firebaseapp.com",
+    projectId: "controle-financeiro-65744",
+    storageBucket: "controle-financeiro-65744.appspot.com",
+    messagingSenderId: "587527394934",
+    appId: "1:587527394934:web:c142740ef0139a5cf63157",
+    measurementId: "G-RT2T1HNV4G"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -24,11 +22,8 @@ const db = getFirestore(app);
 
 // Ativa cache offline
 (async () => {
-  try {
-    await enableIndexedDbPersistence(db);
-  } catch (e) {
-    console.warn("IndexedDB não disponível:", e);
-  }
+    try { await enableIndexedDbPersistence(db); }
+    catch (e) { console.warn("IndexedDB não disponível:", e); }
 })();
 
 let currentUser = null;
@@ -39,163 +34,21 @@ let payablesData = [];
 let myChart;
 
 const formatter = new Intl.NumberFormat('pt-BR', {
-  style: 'currency',
-  currency: 'BRL',
+    style: 'currency',
+    currency: 'BRL',
 });
-
-// ==============================================
-// 🔐 BLOQUEIO E DESBLOQUEIO LOCAL (REVISADO)
-// ==============================================
-
-document.addEventListener('DOMContentLoaded', () => {
-  onAuthStateChanged(auth, user => {
-    const appContainer = document.querySelector('.app-container');
-    const lockScreen = document.getElementById('lock-screen');
-
-    if (user) {
-      const uid = user.uid;
-      const hasPin = localStorage.getItem(`pin_${uid}`);
-      const hasBiometry = localStorage.getItem(`biometry_${uid}`);
-
-      if (hasPin || hasBiometry) {
-        appContainer.style.display = 'none';
-        lockScreen.style.display = 'flex';
-      } else {
-        // sem PIN ou biometria
-        showPage('config-page');
-      }
-    } else {
-      window.location.href = 'login.html';
-    }
-  });
-});
-
-
-function unlockApp() {
-  document.getElementById('lock-screen').style.display = 'none';
-  document.querySelector('.app-container').style.display = 'flex';
-}
-
-// 🔑 Salvar novo PIN (com input)
-window.salvarNovoPin = () => {
-  const user = auth.currentUser;
-  if (!user) return alert('Você precisa estar logado para definir um PIN.');
-
-  const uid = user.uid;
-  const novoPin = document.getElementById('new-pin').value;
-  if (novoPin && novoPin.length >= 4 && novoPin.length <= 6 && !isNaN(novoPin)) {
-    localStorage.setItem(`pin_${uid}`, novoPin);
-    alert('Novo PIN salvo com sucesso!');
-    document.getElementById('new-pin').value = '';
-  } else {
-    alert('PIN inválido. Use apenas números, com 4 a 6 dígitos.');
-  }
-};
-
-
-// 🔓 Desbloquear com PIN
-window.unlockWithPin = () => {
-  const user = auth.currentUser;
-  if (!user) return alert('Você precisa estar logado para desbloquear.');
-
-  const uid = user.uid;
-  const savedPin = localStorage.getItem(`pin_${uid}`);
-  const enteredPin = document.getElementById('lock-pin').value;
-
-  if (!savedPin) {
-    return alert('Nenhum PIN definido. Vá em Configurações para criar um.');
-  }
-
-  if (enteredPin === savedPin) {
-    unlockApp();
-  } else {
-    alert('PIN incorreto');
-  }
-};
-
-// 👆 Registrar biometria usando WebAuthn
-window.registrarBiometria = async () => {
-  const user = auth.currentUser;
-  if (!user) return alert('Você precisa estar logado para cadastrar biometria.');
-
-  try {
-    const publicKey = {
-      challenge: new Uint8Array(32), // no real precisa vir do servidor
-      rp: { name: "Controle Financeiro" },
-      user: {
-        id: new TextEncoder().encode(user.uid),
-        name: user.email,
-        displayName: user.email
-      },
-      pubKeyCredParams: [{ alg: -7, type: "public-key" }],
-      authenticatorSelection: { userVerification: "required" },
-      timeout: 60000,
-    };
-
-    const credential = await navigator.credentials.create({ publicKey });
-
-    // Salva a credencial (rawId) localmente
-    localStorage.setItem(`biometry_${user.uid}`, JSON.stringify(credential.rawId));
-
-    alert('Biometria cadastrada com sucesso! Agora você pode desbloquear usando biometria.');
-  } catch (err) {
-    console.error(err);
-    alert('Erro ao registrar biometria: ' + err);
-  }
-};
-
-// 🔓 Desbloquear com biometria usando WebAuthn
-window.unlockWithBiometrics = async () => {
-  const user = auth.currentUser;
-  if (!user) return alert('Você precisa estar logado para desbloquear.');
-
-  const rawId = localStorage.getItem(`biometry_${user.uid}`);
-  if (!rawId) return alert('Nenhuma biometria cadastrada.');
-
-  try {
-    const publicKey = {
-      challenge: new Uint8Array(32), // no real precisa vir do servidor
-      allowCredentials: [{
-        type: "public-key",
-        id: Uint8Array.from(Object.values(JSON.parse(rawId)))
-      }],
-      userVerification: "required",
-      timeout: 60000
-    };
-
-    await navigator.credentials.get({ publicKey });
-    unlockApp(); // Se passou, desbloqueia
-  } catch (err) {
-    console.error(err);
-    alert('Erro na autenticação biométrica: ' + err);
-  }
-};
-
-
-// ⚙️ Ir para configurações
-window.irParaConfiguracoes = () => {
-  const user = auth.currentUser;
-  if (user) {
-    window.showPage('config-page');
-  } else {
-    alert('Você precisa estar autenticado para configurar segurança.');
-    window.location.href = 'login.html';
-  }
-};
-
 
 // ----------------------
 // 🌍 Funções de Utilidade
 // ----------------------
 
-window.showPage = (pageId) => {
-  document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-  document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
-  closeSidebar();
+const showPage = (pageId) => {
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
+    closeSidebar();
 };
-
 
 const formatCurrency = (value) => formatter.format(value);
 const formatDate = (date) => new Date(date + 'T00:00:00').toLocaleDateString('pt-BR');
@@ -517,7 +370,6 @@ const listenForData = () => {
     onSnapshot(transactionsRef, (snapshot) => {
         transactionsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         refreshDashboard();
-        updateChart();
         updateMonthlySummary(currentMonth); // se ainda usa
         renderMonthlyChart();
         renderMonthlyRankingChart();

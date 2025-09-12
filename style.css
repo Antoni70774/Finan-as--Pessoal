@@ -85,10 +85,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 10px 20px;
     background-color: var(--card-bg);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     z-index: 10;
+    margin-bottom: 0;
 }
 
 .app-header h1 {
@@ -184,8 +185,8 @@ body {
   -webkit-overflow-scrolling: touch; /* rolagem suave em iOS */
   position: relative;
   box-sizing: border-box;
-  /* Remove padding do topo, mantém dos lados e garante espaço para a barra de navegação inferior */
-  padding: 0 20px 90px 20px;
+  padding: 12px 20px 90px 20px !important;
+  margin-top: 0 !important;
 }
 
 .page {
@@ -441,6 +442,7 @@ section {
 #ajuda-page h2 {
     margin-bottom: 20px;
     font-weight: 500;
+    margin-top: 0 !important;
 }
 
 /* Estilos para botões de adicionar nas seções de Metas e Contas a Pagar */
@@ -1059,8 +1061,9 @@ canvas {
 
 /* Remove a margem superior padrão do título nas páginas de resumo */
 #resumo-mensal-page h2,
-#resumo-anual-page h2 {
-    margin-top: 0;
+#resumo-anual-page h2,
+#config-page h2 {
+  margin-top: 0 !important;
 }
 
 /*

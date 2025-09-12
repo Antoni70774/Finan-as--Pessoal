@@ -1125,3 +1125,7 @@ canvas {
   margin-top: 20px; /* para não colar nas sections */
 }
 
+#meta-mensal-text:empty {
+  display: none;
+}
+

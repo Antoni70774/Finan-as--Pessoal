@@ -1125,7 +1125,16 @@ canvas {
   margin-top: 20px; /* para não colar nas sections */
 }
 
-#meta-mensal-text:empty {
-  display: none;
+.page {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.page h2 {
+  margin-top: 0 !important;
+}
+
+.page > *:first-child {
+  margin-top: 0 !important;
 }
 

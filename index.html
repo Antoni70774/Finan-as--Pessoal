@@ -81,14 +81,6 @@
     });
   </script>
 
-  <!-- Tela de bloqueio -->
-  <div id="lock-screen" class="lock-screen" style="display:none;">
-    <h2>🔒 Acesso Protegido</h2>
-    <input type="password" id="lock-pin" placeholder="Digite seu PIN" maxlength="6">
-    <button onclick="unlockWithPin()">Desbloquear</button>
-    <button onclick="unlockWithBiometrics()">Usar biometria</button>
-  </div>
-
   <div class="app-container">
     <!-- Header -->
     <header class="app-header">
@@ -353,28 +345,13 @@
         <!-- Página: Configurações -->
         <div id="config-page" class="page">
           <h2>⚙️ Configurações</h2>
-        
-          <!-- 🔑 Primeiro bloco: PIN -->
-          <div class="config-section">
-            <h3>🔑 Definir PIN de Acesso</h3>
-            <input type="password" id="new-pin" placeholder="Digite o novo PIN" maxlength="6">
-            <button onclick="salvarNovoPin()">Salvar PIN</button>
-          </div>
-        
-          <!-- 👆 Segundo bloco: biometria -->
-          <div class="config-section">
-            <h3>👆 Cadastrar Biometria</h3>
-            <button onclick="registrarBiometria()">Registrar Biometria</button>
-          </div>
-        
-          <!-- Depois, os outros botões -->
           <ul class="config-options">
             <li><button onclick="exportarDados()">📤 Exportar Dados</button></li>
             <li><button onclick="trocarTema()">🎨 Alterar Tema</button></li>
             <li><button onclick="resetarApp()">♻️ Resetar Aplicativo</button></li>
           </ul>
         </div>
-
+        
         <!-- Ajuda -->
         <div id="ajuda-page" class="page">
           <h2>❓ Ajuda</h2>
@@ -403,6 +380,5 @@
 
   <!-- Seu app.js -->
  <script type="module" src="./app.js"></script>
-
 </body>
 </html>

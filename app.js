@@ -255,6 +255,29 @@ const renderTransactions = () => {
     });
 };
 
+const renderTransactionList = (transacoes) => {
+  const list = document.getElementById('transaction-list');
+  list.innerHTML = '';
+  transacoes.sort((a, b) => new Date(b.date) - new Date(a.date));
+  transacoes.forEach(t => {
+    const li = document.createElement('li');
+    li.className = 'transaction-item';
+    li.setAttribute('data-id', t.id);
+    li.innerHTML = `
+      <span class="transaction-type ${t.type === 'income' ? 'income' : 'expense'}">${t.type === 'income' ? '+' : '-'}</span>
+      <div class="transaction-details">
+        <div class="transaction-info">
+          <span class="description">${t.description}</span>
+          <span class="date">${formatDate(t.date)}</span>
+        </div>
+        <div class="transaction-amount">${formatCurrency(parseFloat(t.amount))}</div>
+      </div>
+    `;
+    li.addEventListener('click', () => editTransaction(t.id));
+    list.appendChild(li);
+  });
+};
+
 
 // ==============================
 // 🔹 Metas (Goals)

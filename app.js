@@ -1066,17 +1066,6 @@ window.resetarApp = () => {
 window.abrirAlerta = openAlertModal;
 window.fecharAlerta = closeAlertModal;
 
-// Navegação do resumo mensal
-document.getElementById('resumo-prev-month').addEventListener('click', () => {
-    currentMonth.setMonth(currentMonth.getMonth() - 1);
-    updateMonthlySummary(currentMonth);
-});
-
-document.getElementById('resumo-next-month').addEventListener('click', () => {
-    currentMonth.setMonth(currentMonth.getMonth() + 1);
-    updateMonthlySummary(currentMonth);
-});
-
 // Menu lateral
 document.getElementById('menu-botao').addEventListener('click', (e) => {
     e.stopPropagation();

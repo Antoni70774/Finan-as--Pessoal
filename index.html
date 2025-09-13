@@ -1,291 +1,176 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Controle Financeiro</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4A90E2">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+  <!-- Chart.js precisa existir antes do app.js se app.js usar window.Chart -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
+  <!-- ajustes rápidos de layout que corrigem espaços no topo e permitem scroll -->
   <style>
-    /* Corrige espaços no topo das páginas */
-    #app-main {
-      padding: 12px 20px 90px 20px !important;
-      overflow-y: auto;
-      height: calc(100vh - 60px); /* desconta header */
-    }
-
-    .page {
-      padding-top: 0 !important;
-      margin-top: 0 !important;
-    }
-
-    #resumo-mensal-page h2,
-    #resumo-anual-page h2,
-    #config-page h2 {
-      margin-top: 0 !important;
-    }
-
-    .summary-boxes {
-      margin-top: 10px;
-    }
+    html,body { height:100%; margin:0; }
+    body { font-family: 'Roboto', sans-serif; background:#1f2a36; color:#fff; }
+    .app-container { max-width:450px; margin:0 auto; height:100vh; display:flex; flex-direction:column; }
+    .app-header { padding:14px; background:#263544; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:50; }
+    #app-main { flex:1; overflow-y:auto; padding:12px 16px 100px 16px; box-sizing:border-box; }
+    .page { display:none; padding-top:0; margin-top:0; }
+    .page.active { display:block; }
+    /* remove gap acima de títulos e páginas específicas */
+    #resumo-mensal-page, #resumo-anual-page, #config-page { padding-top: 6px; margin-top:0; }
+    #resumo-mensal-page h2, #resumo-anual-page h2, #config-page h2 { margin-top:0; }
+    /* bottom nav */
+    .bottom-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:450px; background:#263544; height:64px; display:flex; align-items:center; justify-content:space-around; z-index:100; }
+    canvas { width:100% !important; max-width:100%; height:auto !important; }
   </style>
 </head>
-
-<body class="dark-theme">
-  <!-- Tema -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const temaSalvo = localStorage.getItem('tema');
-      if (temaSalvo === 'claro') {
-        document.body.classList.remove('dark-theme');
-      } else {
-        document.body.classList.add('dark-theme');
-      }
-    });
-
-    window.trocarTema = () => {
-      document.body.classList.toggle('dark-theme');
-      const temaAtual = document.body.classList.contains('dark-theme') ? 'escuro' : 'claro';
-      localStorage.setItem('tema', temaAtual);
-    };
-  </script>
-
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, enableIndexedDbPersistence, collection, doc, setDoc, getDocs, onSnapshot, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBQeYc0Y-eYONv3ZfvZoJEzOjoKR371P-Y",
-      authDomain: "controle-financeiro-65744.firebaseapp.com",
-      projectId: "controle-financeiro-65744",
-      storageBucket: "controle-financeiro-65744.appspot.com",
-      messagingSenderId: "587527394934",
-      appId: "1:587527394934:web:c142740ef0139a5cf63157",
-      measurementId: "G-RT2T1HNV4G"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    (async () => {
-      try { await enableIndexedDbPersistence(db); }
-      catch (e) { console.warn("IndexedDB não disponível:", e); }
-    })();
-
-    window.firebase = { auth, db, collection, doc, setDoc, getDocs, onSnapshot, writeBatch };
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-      } else {
-        console.log("Usuário logado:", user.email);
-      }
-    });
-
-    document.addEventListener("click", async (e) => {
-      if (e.target.id === "btn-logout") {
-        await signOut(auth);
-        window.location.href = "login.html";
-      }
-    });
-  </script>
-
+<body>
   <div class="app-container">
-    <!-- Header -->
+    <!-- header -->
     <header class="app-header">
       <h1>Visão Geral</h1>
-      <div class="profile-icon">
-        <div id="alert-icon" onclick="abrirAlerta()">
-          🔔 <span id="alert-count" class="badge">0</span>
-        </div>
-      </div>
+      <div id="alert-icon" style="cursor:pointer" onclick="abrirAlerta()">🔔 <span id="alert-count" class="badge">0</span></div>
     </header>
-    
-    <!-- Main -->
+
+    <!-- main -->
     <main id="app-main">
       <!-- Dashboard -->
-      <div id="dashboard-page" class="page active">
-        <div class="month-nav">
+      <section id="dashboard-page" class="page active">
+        <div class="month-nav" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
           <button id="prev-month" class="btn-secondary">&lt;</button>
           <span id="current-month-year"></span>
           <button id="next-month" class="btn-secondary">&gt;</button>
         </div>
-        <div class="dashboard-summary" id="dashboard-summary">
-          <div class="summary-item saldo">
-            <span>Saldo</span>
-            <h4 id="month-balance">R$ 0,00</h4>
-          </div>
-          <div class="summary-row">
-            <div class="summary-item receita">
-              <span>Receita</span>
-              <h4 id="month-income">R$ 0,00</h4>
-            </div>
-            <div class="summary-item despesa">
-              <span>Despesa</span>
-              <h4 id="month-expense">R$ 0,00</h4>
-            </div>
-          </div>
-        </div>
 
-        <div class="chart-selector">
-          <button class="chart-btn active" data-type="all">Geral</button>
-          <button class="chart-btn" data-type="expense">Despesas</button>
-          <button class="chart-btn" data-type="income">Receitas</button>
+        <div class="dashboard-summary" id="dashboard-summary" style="margin-bottom:16px;">
+          <div class="summary-item saldo"><span>Saldo</span><h4 id="month-balance">R$ 0,00</h4></div>
+          <div class="summary-row" style="display:flex;gap:8px;margin-top:8px;">
+            <div class="summary-item receita"><span>Receita</span><h4 id="month-income">R$ 0,00</h4></div>
+            <div class="summary-item despesa"><span>Despesa</span><h4 id="month-expense">R$ 0,00</h4></div>
+          </div>
         </div>
 
         <div class="chart-container">
           <h3 id="chart-title">Movimentação por Categoria</h3>
           <canvas id="main-chart"></canvas>
         </div>
-        <div id="chart-details" class="chart-details"></div>
 
         <div class="category-summary-section">
           <h3>Resumo por Categoria</h3>
           <div id="category-summary" class="category-grid"></div>
         </div>
-        
-        <div class="recent-transactions">
+
+        <div class="recent-transactions" style="margin-top:16px;">
           <h3>Transações Recentes</h3>
           <ul id="transaction-list"></ul>
         </div>
-      </div>
+      </section>
 
-      <!-- Metas -->
-      <div id="goals-page" class="page">
+      <!-- Goals -->
+      <section id="goals-page" class="page">
         <h2>Metas Pessoais</h2>
         <button id="add-goal-btn" class="btn-primary">Nova Meta</button>
         <div id="goal-list"></div>
-      </div>
-            
-      <!-- Contas a pagar -->
-      <div id="payables-page" class="page">
+      </section>
+
+      <!-- Payables -->
+      <section id="payables-page" class="page">
         <h2>Despesas a Pagar</h2>
         <button id="add-payable-btn" class="btn-primary">Nova Conta</button>
         <div id="payable-list"></div>
-      </div>
+      </section>
 
-      <!-- Perfil -->
-      <div id="profile-page" class="page">
+      <!-- Profile -->
+      <section id="profile-page" class="page">
         <h2>Perfil</h2>
-        <div>
-          <span>Usuário atual: <span id="current-user-name"></span></span>
-        </div>
-      </div>
+        <p>Usuário: <span id="current-user-name"></span></p>
+      </section>
 
       <!-- Resumo Mensal -->
-      <div id="resumo-mensal-page" class="page">
+      <section id="resumo-mensal-page" class="page">
         <h2>📅 Resumo Mensal</h2>
-        <div class="month-nav">
+
+        <div class="month-nav" style="display:flex;align-items:center;gap:8px;margin:8px 0;">
           <button id="resumo-prev-month" class="btn-secondary">&lt;</button>
           <span id="resumo-current-month-year"></span>
           <button id="resumo-next-month" class="btn-secondary">&gt;</button>
         </div>
-        <div id="resumo-mensal-summary" class="summary-boxes">
-          <div class="summary-item">
-            <h4>Receita</h4>
-            <p id="monthly-revenue">R$ 0,00</p>
-          </div>
-          <div class="summary-item">
-            <h4>Despesa</h4>
-            <p id="monthly-expense">R$ 0,00</p>
-          </div>
-          <div class="summary-item">
-            <h4>Saldo</h4>
-            <p id="monthly-balance">R$ 0,00</p>
-          </div>
+
+        <div id="resumo-mensal-summary" class="summary-boxes" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+          <div class="summary-item"><h4>Receita</h4><p id="monthly-revenue">R$ 0,00</p></div>
+          <div class="summary-item"><h4>Despesa</h4><p id="monthly-expense">R$ 0,00</p></div>
+          <div class="summary-item"><h4>Saldo</h4><p id="monthly-balance">R$ 0,00</p></div>
         </div>
+
         <h3>Ranking de Categorias</h3>
         <canvas id="monthly-ranking-chart"></canvas>
+
         <h3>Despesas por Categoria</h3>
         <canvas id="monthly-category-chart"></canvas>
-        <h3>Gráfico de Barras (Receita vs Despesa)</h3>
+
+        <h3>Gastos (Receita vs Despesa)</h3>
         <canvas id="monthly-bar-chart"></canvas>
-      </div>
+      </section>
 
       <!-- Resumo Anual -->
-      <div id="resumo-anual-page" class="page">
+      <section id="resumo-anual-page" class="page">
         <h2>📈 Resumo Anual</h2>
-        <div class="summary-boxes">
+        <div class="summary-boxes" style="display:flex;gap:8px;">
           <div class="box"><h4>Receita Total</h4><p id="annual-revenue">R$ 0,00</p></div>
           <div class="box"><h4>Despesa Total</h4><p id="annual-expense">R$ 0,00</p></div>
           <div class="box"><h4>Saldo Acumulado</h4><p id="annual-balance">R$ 0,00</p></div>
         </div>
-        <canvas id="annual-chart" width="100%" height="70"></canvas>
-      </div>
+        <canvas id="annual-chart"></canvas>
+      </section>
 
       <!-- Configurações -->
-      <div id="config-page" class="page">
+      <section id="config-page" class="page">
         <h2>⚙️ Configurações</h2>
         <ul class="config-options">
           <li><button onclick="exportarDados()">📤 Exportar Dados</button></li>
           <li><button onclick="trocarTema()">🎨 Alterar Tema</button></li>
           <li><button onclick="resetarApp()">♻️ Resetar Aplicativo</button></li>
         </ul>
-      </div>
+      </section>
 
       <!-- Ajuda -->
-      <div id="ajuda-page" class="page">
+      <section id="ajuda-page" class="page">
         <h2>❓ Ajuda</h2>
-        <p>Bem-vindo ao <b>Controle Financeiro</b>!</p>
-        <ul>
-          <li>📅 Resumo Mensal → Veja receitas, despesas e saldo do mês.</li>
-          <li>📊 Resumo Anual → Acompanhe seu desempenho no ano.</li>
-          <li>👤 Perfil → Gerencie suas informações pessoais.</li>
-          <li>⚙️ Configurações → Exporte dados, mude tema ou reset.</li>
-        </ul>
-      </div>
+        <p>Bem-vindo ao Controle Financeiro!</p>
+      </section>
     </main>
 
-    <!-- Navegação inferior -->
+    <!-- bottom nav (fixo) -->
     <nav class="bottom-nav">
-      <button class="nav-item active" data-page="dashboard-page">
-        <span class="material-icons-sharp">home</span>
-      </button>
-      <button class="nav-item" data-page="goals-page">
-        <span class="material-icons-sharp">flag</span>
-      </button>
-      <button id="add-transaction-btn" class="fab">
-        <span class="material-icons-sharp">add</span>
-      </button>
-      <button class="nav-item" data-page="payables-page">
-        <span class="material-icons-sharp">notifications</span>
-      </button>
-      <button id="menu-botao" class="nav-item profile-trigger">
-        <span class="material-icons-sharp">menu</span>
-      </button>
+      <button class="nav-item active" data-page="dashboard-page"><span class="material-icons-sharp">home</span></button>
+      <button class="nav-item" data-page="goals-page"><span class="material-icons-sharp">flag</span></button>
+      <button id="add-transaction-btn" class="fab"><span class="material-icons-sharp">add</span></button>
+      <button class="nav-item" data-page="payables-page"><span class="material-icons-sharp">notifications</span></button>
+      <button id="menu-botao" class="nav-item profile-trigger"><span class="material-icons-sharp">menu</span></button>
     </nav>
 
-    <!-- Menu lateral -->
-    <div id="menu-perfil" class="menu-lateral" style="display: none;">
+    <!-- menu lateral -->
+    <div id="menu-perfil" class="menu-lateral" style="display:none;">
       <ul>
         <li onclick="abrirResumoMensal()">📅 Resumo Mensal</li>
         <li onclick="abrirResumoAnual()">📈 Resumo Anual</li>
         <li onclick="abrirPagina('profile-page')">👤 Perfil</li>
-        <li onclick="exportarDados()">📤 Exportar Dados</li>
-        <li onclick="abrirConfig()">⚙️ Configurações</li>
         <li><button id="btn-logout" class="btn-secondary">🚪 Sair</button></li>
       </ul>
     </div>
 
-    <!-- Modal Alerta -->
-    <div id="alert-modal" class="modal">
-      <div class="modal-content">
-        <h3>Contas a vencer</h3>
-        <ul id="alert-list"></ul>
-        <button onclick="fecharAlerta()">Fechar</button>
-      </div>
+    <!-- alert modal -->
+    <div id="alert-modal" class="modal" style="display:none;">
+      <div class="modal-content"><h3>Contas a vencer</h3><ul id="alert-list"></ul><button onclick="fecharAlerta()">Fechar</button></div>
     </div>
   </div>
 
-  <!-- JS principal -->
+  <!-- app.js (único lugar que inicializa Firebase e roda a lógica) -->
   <script type="module" src="./app.js"></script>
 </body>
 </html>

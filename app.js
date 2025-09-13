@@ -912,25 +912,6 @@ document.querySelectorAll('.nav-item').forEach(btn => {
         }
     });
 });
-
-// Botão filtro de geral,receita e despesa
-document.querySelectorAll('.chart-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    // Atualiza visualmente o botão ativo
-    document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    const tipo = btn.getAttribute('data-type');
-
-    // Atualiza o gráfico (se você já tem essa função)
-    if (typeof atualizarGraficoPrincipal === 'function') {
-      atualizarGraficoPrincipal(tipo);
-    }
-
-    // Filtra transações recentes
-    const transacoesFiltradas = transactionsData.filter(t => {
-      const d = new Date(t.date
-
                          
 // Botão FAB para nova transação
 document.getElementById('add-transaction-btn').addEventListener('click', () => {

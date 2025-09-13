@@ -178,14 +178,36 @@ const renderCategorySummary = (categories) => {
     const item = document.createElement('div');
     item.className = 'summary-item';
     item.style.textAlign = 'center';
+    item.style.cursor = 'pointer'; // indica que é clicável
     item.innerHTML = `
       <div style="font-size: 1.5rem;">${icon}</div>
       <span>${category}</span>
       <h4>${formatCurrency(categories[key])}</h4>
     `;
+
+    // ✅ Adiciona evento de clique para filtrar transações
+    item.addEventListener('click', () => {
+      const transacoesFiltradas = transactionsData.filter(t => {
+        const d = new Date(t.date + 'T12:00:00-03:00');
+        return d.getFullYear() === currentMonth.getFullYear() &&
+               d.getMonth() === currentMonth.getMonth() &&
+               t.category === category;
+      });
+      renderTransactionList(transacoesFiltradas);
+    });
+
     summaryDiv.appendChild(item);
   }
 };
+
+document.getElementById('reset-transactions').addEventListener('click', () => {
+  const todas = transactionsData.filter(t => {
+    const d = new Date(t.date + 'T12:00:00-03:00');
+    return d.getFullYear() === currentMonth.getFullYear() &&
+           d.getMonth() === currentMonth.getMonth();
+  });
+  renderTransactionList(todas);
+});
 
 const calculateDashboardData = () => {
     let income = 0;
